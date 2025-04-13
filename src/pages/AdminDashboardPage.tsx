@@ -8,7 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mailbox, Users } from "lucide-react";
+import { Mailbox, Users, RefreshCw } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const AdminDashboardPage = () => {
   const { isAuthenticated, isAdmin, logout } = useAuth();
@@ -16,6 +18,7 @@ const AdminDashboardPage = () => {
   const [contactSubmissions, setContactSubmissions] = useState<any[]>([]);
   const [newsletterSubscriptions, setNewsletterSubscriptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
@@ -28,6 +31,7 @@ const AdminDashboardPage = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
+      console.log("Fetching contact submissions...");
       // Fetch contact submissions
       const { data: contactData, error: contactError } = await supabase
         .from('contact_submissions')
@@ -35,9 +39,15 @@ const AdminDashboardPage = () => {
         .order('created_at', { ascending: false })
         .limit(5);
 
-      if (contactError) throw contactError;
+      if (contactError) {
+        console.error("Error fetching contact submissions:", contactError);
+        throw contactError;
+      }
+      
+      console.log("Contact submissions retrieved:", contactData);
       setContactSubmissions(contactData || []);
 
+      console.log("Fetching newsletter subscriptions...");
       // Fetch newsletter subscriptions
       const { data: newsletterData, error: newsletterError } = await supabase
         .from('newsletter_subscriptions')
@@ -45,13 +55,29 @@ const AdminDashboardPage = () => {
         .order('created_at', { ascending: false })
         .limit(5);
 
-      if (newsletterError) throw newsletterError;
+      if (newsletterError) {
+        console.error("Error fetching newsletter subscriptions:", newsletterError);
+        throw newsletterError;
+      }
+      
+      console.log("Newsletter subscriptions retrieved:", newsletterData);
       setNewsletterSubscriptions(newsletterData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load dashboard data. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchData();
   };
 
   if (!isAuthenticated || !isAdmin) {
@@ -59,7 +85,12 @@ const AdminDashboardPage = () => {
   }
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'MMM d, yyyy');
+    try {
+      return format(new Date(dateString), 'MMM d, yyyy');
+    } catch (error) {
+      console.error("Error formatting date:", dateString, error);
+      return "Invalid date";
+    }
   };
 
   return (
@@ -96,7 +127,19 @@ const AdminDashboardPage = () => {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md mb-12">
-          <h3 className="text-xl font-bold mb-6">Recent Activity</h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold">Recent Activity</h3>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleRefresh} 
+              disabled={isLoading || refreshing}
+              className="flex items-center gap-1"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </Button>
+          </div>
           
           <Tabs defaultValue="contact">
             <TabsList className="mb-6">
@@ -130,7 +173,16 @@ const AdminDashboardPage = () => {
                           <TableCell className="font-medium">{submission.name}</TableCell>
                           <TableCell>{submission.email}</TableCell>
                           <TableCell className="max-w-xs truncate">
-                            {submission.message}
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span className="cursor-help">{submission.message}</span>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-sm">
+                                  <p>{submission.message}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </TableCell>
                           <TableCell>{formatDate(submission.created_at)}</TableCell>
                         </TableRow>

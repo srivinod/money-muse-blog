@@ -46,7 +46,9 @@ const AdminDashboardPage = () => {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-xl font-bold mb-2">Categories</h3>
             <p className="text-gray-600 mb-4">Organize your content with categories</p>
-            <Button variant="outline">Manage Categories</Button>
+            <Link to="/admin/categories">
+              <Button variant="outline">Manage Categories</Button>
+            </Link>
           </div>
         </div>
       </div>

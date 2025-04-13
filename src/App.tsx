@@ -19,6 +19,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import BlogManagementPage from "./pages/BlogManagementPage";
 import BlogEditorPage from "./pages/BlogEditorPage";
+import CategoriesManagementPage from "./pages/CategoriesManagementPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -58,6 +59,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requireAdmin>
                     <BlogManagementPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/categories" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <CategoriesManagementPage />
                   </ProtectedRoute>
                 } 
               />

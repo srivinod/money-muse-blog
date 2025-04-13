@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { categories } from "@/data/blogData";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchBlogPostById, createBlogPost, updateBlogPost, BlogPost } from "@/services/blogService";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const BlogEditorPage = () => {
   const { isAuthenticated, isAdmin } = useAuth();
@@ -29,6 +31,8 @@ const BlogEditorPage = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [author, setAuthor] = useState("Admin"); // Default author
   const [featured, setFeatured] = useState(false); // Add featured state
+  const [metaTitle, setMetaTitle] = useState(""); // Meta title for SEO
+  const [metaDescription, setMetaDescription] = useState(""); // Meta description for SEO
   const [date, setDate] = useState(() => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -57,7 +61,9 @@ const BlogEditorPage = () => {
       setImageUrl(postData.imageUrl || "");
       setAuthor(postData.author || "Admin");
       setDate(postData.date || "");
-      setFeatured(postData.featured || false); // Set featured status
+      setFeatured(postData.featured || false);
+      setMetaTitle(postData.metaTitle || "");
+      setMetaDescription(postData.metaDescription || "");
     }
   }, [postData]);
 
@@ -128,6 +134,21 @@ const BlogEditorPage = () => {
     if (!isEditMode && !slug) {
       setSlug(newTitle.toLowerCase().replace(/[^\w\s]/gi, "").replace(/\s+/g, "-"));
     }
+
+    // Auto-generate meta title if it's empty
+    if (!metaTitle) {
+      setMetaTitle(newTitle);
+    }
+  };
+
+  const handleExcerptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newExcerpt = e.target.value;
+    setExcerpt(newExcerpt);
+    
+    // Auto-generate meta description if it's empty
+    if (!metaDescription) {
+      setMetaDescription(newExcerpt);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +187,9 @@ const BlogEditorPage = () => {
       imageUrl,
       author,
       date,
-      featured // Include featured status in post data
+      featured,
+      metaTitle: metaTitle || title, // Use regular title as fallback
+      metaDescription: metaDescription || excerpt // Use excerpt as fallback
     };
     
     if (isEditMode) {
@@ -197,134 +220,211 @@ const BlogEditorPage = () => {
         </div>
         
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Post Title</Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={handleTitleChange}
-                  placeholder="Enter post title"
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="slug">Post Slug</Label>
-                <Input
-                  id="slug"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  placeholder="Enter post slug"
-                  required
-                />
-                <p className="text-sm text-gray-500 mt-1">
-                  The slug is used in the URL of your post
-                </p>
-              </div>
-              
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <select
-                  id="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((cat) => (
-                    <option key={cat.title} value={cat.title}>
-                      {cat.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="author">Author</Label>
-                <Input
-                  id="author"
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="Enter author name"
-                  required
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="featured" 
-                  checked={featured} 
-                  onCheckedChange={(checked) => setFeatured(checked as boolean)}
-                />
-                <Label 
-                  htmlFor="featured" 
-                  className="text-sm font-medium leading-none cursor-pointer"
-                >
-                  Featured Post
-                </Label>
-              </div>
-            </div>
+          <Tabs defaultValue="content" className="mb-6">
+            <TabsList className="w-full mb-6">
+              <TabsTrigger value="content" className="flex-1">Content</TabsTrigger>
+              <TabsTrigger value="seo" className="flex-1">SEO & Meta Tags</TabsTrigger>
+            </TabsList>
             
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="featuredImage">Featured Image</Label>
-                <div className="mt-1 flex items-center gap-4">
-                  {imageUrl && (
-                    <div className="w-24 h-24 relative">
-                      <img
-                        src={imageUrl}
-                        alt="Featured"
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                    </div>
-                  )}
-                  <label className="cursor-pointer">
-                    <Button type="button" variant="outline">
-                      {imageUrl ? "Change Image" : "Upload Image"}
-                    </Button>
+            <TabsContent value="content">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">Post Title</Label>
                     <Input
-                      id="featuredImage"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
+                      id="title"
+                      value={title}
+                      onChange={handleTitleChange}
+                      placeholder="Enter post title"
+                      required
                     />
-                  </label>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="slug">Post Slug</Label>
+                    <Input
+                      id="slug"
+                      value={slug}
+                      onChange={(e) => setSlug(e.target.value)}
+                      placeholder="Enter post slug"
+                      required
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      The slug is used in the URL of your post
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <select
+                      id="category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md"
+                      required
+                    >
+                      <option value="">Select a category</option>
+                      {categories.map((cat) => (
+                        <option key={cat.title} value={cat.title}>
+                          {cat.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="author">Author</Label>
+                    <Input
+                      id="author"
+                      value={author}
+                      onChange={(e) => setAuthor(e.target.value)}
+                      placeholder="Enter author name"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="featured" 
+                      checked={featured} 
+                      onCheckedChange={(checked) => setFeatured(checked as boolean)}
+                    />
+                    <Label 
+                      htmlFor="featured" 
+                      className="text-sm font-medium leading-none cursor-pointer"
+                    >
+                      Featured Post
+                    </Label>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="featuredImage">Featured Image</Label>
+                    <div className="mt-1 flex items-center gap-4">
+                      {imageUrl && (
+                        <div className="w-24 h-24 relative">
+                          <img
+                            src={imageUrl}
+                            alt="Featured"
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                        </div>
+                      )}
+                      <label className="cursor-pointer">
+                        <Button type="button" variant="outline">
+                          {imageUrl ? "Change Image" : "Upload Image"}
+                        </Button>
+                        <Input
+                          id="featuredImage"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="excerpt">Post Excerpt</Label>
+                    <Textarea
+                      id="excerpt"
+                      value={excerpt}
+                      onChange={handleExcerptChange}
+                      placeholder="Enter a short summary of your post"
+                      className="h-24 resize-none"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="date">Publication Date</Label>
+                    <Input
+                      id="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      placeholder="e.g., April 15, 2025"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
               
-              <div>
-                <Label htmlFor="excerpt">Post Excerpt</Label>
-                <Textarea
-                  id="excerpt"
-                  value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
-                  placeholder="Enter a short summary of your post"
-                  className="h-24 resize-none"
-                  required
-                />
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="content">Post Content</Label>
+                <RichTextEditor value={content} onChange={setContent} />
               </div>
-
-              <div>
-                <Label htmlFor="date">Publication Date</Label>
-                <Input
-                  id="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  placeholder="e.g., April 15, 2025"
-                  required
-                />
+            </TabsContent>
+            
+            <TabsContent value="seo">
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="metaTitle">Meta Title (for SEO)</Label>
+                  <Input
+                    id="metaTitle"
+                    value={metaTitle}
+                    onChange={(e) => setMetaTitle(e.target.value)}
+                    placeholder="Enter meta title for search engines"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    If left empty, the post title will be used instead. 
+                    Recommended length: 50-60 characters.
+                  </p>
+                  {metaTitle && (
+                    <div className="mt-2">
+                      <div className="text-sm font-medium text-blue-600 mb-1">Preview:</div>
+                      <div className="p-3 border rounded-md bg-gray-50">
+                        <div className="text-xl text-blue-700 mb-1 truncate">{metaTitle}</div>
+                        <div className="text-green-700 text-sm mb-1 truncate">
+                          moneymuse.com/blog/{slug}
+                        </div>
+                        <div className="text-sm text-gray-700 truncate">
+                          {metaDescription || excerpt || "No description provided."}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <Label htmlFor="metaDescription">Meta Description</Label>
+                  <Textarea
+                    id="metaDescription"
+                    value={metaDescription}
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                    placeholder="Enter meta description for search engines"
+                    className="h-24 resize-none"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    If left empty, the post excerpt will be used. 
+                    Recommended length: 150-160 characters.
+                  </p>
+                  <div className="mt-2 text-sm text-gray-500">
+                    <span className={metaDescription.length > 160 ? "text-red-500 font-medium" : ""}>
+                      Character count: {metaDescription.length}/160
+                    </span>
+                    {metaDescription.length > 160 && (
+                      <span className="ml-2 text-red-500">
+                        (Exceeds recommended length)
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-blue-50 rounded-md">
+                  <h3 className="font-semibold text-blue-800 mb-2">SEO Best Practices</h3>
+                  <ul className="list-disc list-inside space-y-1 text-sm text-blue-700">
+                    <li>Use relevant keywords in your title and description</li>
+                    <li>Keep meta titles under 60 characters</li>
+                    <li>Keep meta descriptions under 160 characters</li>
+                    <li>Make your description compelling to increase click-through rates</li>
+                    <li>Include your main keyword early in both title and description</li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          </div>
-          
-          <div className="space-y-2 mb-6">
-            <Label htmlFor="content">Post Content</Label>
-            <RichTextEditor value={content} onChange={setContent} />
-          </div>
+            </TabsContent>
+          </Tabs>
           
           <div className="flex justify-end gap-4">
             <Button type="button" variant="outline" onClick={() => navigate("/admin/posts")}>

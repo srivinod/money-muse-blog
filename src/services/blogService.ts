@@ -12,6 +12,8 @@ export type BlogPost = {
   date: string;
   imageUrl: string;
   featured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
 };
 
 export type BlogCategory = {
@@ -38,7 +40,9 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   return data.map(post => ({
     ...post,
     imageUrl: post.imageurl, // Fix the casing difference between DB and client
-    featured: Boolean(post.featured) // Ensure featured is a boolean
+    featured: Boolean(post.featured), // Ensure featured is a boolean
+    metaTitle: post.meta_title || post.title, // Use DB meta_title or fallback to title
+    metaDescription: post.meta_description || post.excerpt // Use DB meta_description or fallback to excerpt
   }));
 };
 
@@ -59,7 +63,9 @@ export const fetchFeaturedPosts = async (): Promise<BlogPost[]> => {
   return data.map(post => ({
     ...post,
     imageUrl: post.imageurl,
-    featured: true
+    featured: true,
+    metaTitle: post.meta_title || post.title,
+    metaDescription: post.meta_description || post.excerpt
   }));
 };
 
@@ -79,7 +85,9 @@ export const fetchLatestPosts = async (): Promise<BlogPost[]> => {
   return data.map(post => ({
     ...post,
     imageUrl: post.imageurl,
-    featured: Boolean(post.featured)
+    featured: Boolean(post.featured),
+    metaTitle: post.meta_title || post.title,
+    metaDescription: post.meta_description || post.excerpt
   }));
 };
 
@@ -108,7 +116,9 @@ export const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: Boolean(data.featured)
+    featured: Boolean(data.featured),
+    metaTitle: data.meta_title || data.title,
+    metaDescription: data.meta_description || data.excerpt
   };
 };
 
@@ -132,7 +142,9 @@ export const fetchBlogPostById = async (id: string): Promise<BlogPost | null> =>
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: Boolean(data.featured)
+    featured: Boolean(data.featured),
+    metaTitle: data.meta_title || data.title,
+    metaDescription: data.meta_description || data.excerpt
   };
 };
 
@@ -164,7 +176,9 @@ export const fetchBlogPostsByCategory = async (categorySlug: string): Promise<Bl
   return data.map(post => ({
     ...post,
     imageUrl: post.imageurl,
-    featured: Boolean(post.featured)
+    featured: Boolean(post.featured),
+    metaTitle: post.meta_title || post.title,
+    metaDescription: post.meta_description || post.excerpt
   }));
 };
 
@@ -186,7 +200,9 @@ export const fetchRelatedPosts = async (slug: string, category: string): Promise
   return data.map(post => ({
     ...post,
     imageUrl: post.imageurl,
-    featured: Boolean(post.featured)
+    featured: Boolean(post.featured),
+    metaTitle: post.meta_title || post.title,
+    metaDescription: post.meta_description || post.excerpt
   }));
 };
 
@@ -196,10 +212,15 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
   const dbPost = {
     ...post,
     imageurl: post.imageUrl,
-    featured: post.featured || false
+    featured: post.featured || false,
+    meta_title: post.metaTitle || post.title,
+    meta_description: post.metaDescription || post.excerpt
   };
   
+  // Remove fields not matching DB schema
   delete (dbPost as any).imageUrl;
+  delete (dbPost as any).metaTitle;
+  delete (dbPost as any).metaDescription;
 
   const { data, error } = await supabase
     .from("blog_posts")
@@ -215,18 +236,30 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: Boolean(data.featured)
+    featured: Boolean(data.featured),
+    metaTitle: data.meta_title || data.title,
+    metaDescription: data.meta_description || data.excerpt
   };
 };
 
 // Update an existing blog post
 export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promise<BlogPost> => {
-  // Convert imageUrl to imageurl for the database if it exists
+  // Convert fields to match DB schema
   const dbPost: any = { ...post };
   
   if (post.imageUrl) {
     dbPost.imageurl = post.imageUrl;
     delete dbPost.imageUrl;
+  }
+
+  if (post.metaTitle !== undefined) {
+    dbPost.meta_title = post.metaTitle;
+    delete dbPost.metaTitle;
+  }
+
+  if (post.metaDescription !== undefined) {
+    dbPost.meta_description = post.metaDescription;
+    delete dbPost.metaDescription;
   }
 
   const { data, error } = await supabase
@@ -244,7 +277,9 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: Boolean(data.featured)
+    featured: Boolean(data.featured),
+    metaTitle: data.meta_title || data.title,
+    metaDescription: data.meta_description || data.excerpt
   };
 };
 
@@ -299,7 +334,9 @@ export const migrateMockDataToSupabase = async () => {
       author: post.author,
       date: post.date,
       imageurl: post.imageUrl, // Note the lowercase 'url'
-      featured: false // Default featured to false
+      featured: false, // Default featured to false
+      meta_title: post.title, // Default meta_title to post title
+      meta_description: post.excerpt // Default meta_description to post excerpt
     }));
 
     // Insert all posts

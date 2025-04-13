@@ -1,11 +1,23 @@
-
 import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBlogPostBySlug } from "@/services/blogService";
 
 const Layout = () => {
   const location = useLocation();
+  
+  // Check if we're on a blog post page
+  const isBlogPost = location.pathname.startsWith('/blog/');
+  const slug = isBlogPost ? location.pathname.split('/blog/')[1] : null;
+  
+  // Fetch blog post data if we're viewing a blog post
+  const { data: blogPost } = useQuery({
+    queryKey: ['blog-post', slug],
+    queryFn: () => fetchBlogPostBySlug(slug as string),
+    enabled: !!slug, // Only run query if we have a slug
+  });
   
   useEffect(() => {
     // Update meta tags based on current route
@@ -14,8 +26,13 @@ const Layout = () => {
       let title = "Money Muse - Master Your Money, One Step at a Time";
       let description = "Money Muse provides practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.";
       
-      // Set route-specific meta data
-      if (path.includes('/category/')) {
+      // If we're on a blog post page and have post data, use its meta information
+      if (isBlogPost && blogPost) {
+        title = blogPost.metaTitle || blogPost.title;
+        description = blogPost.metaDescription || blogPost.excerpt;
+      } 
+      // Otherwise set route-specific meta data
+      else if (path.includes('/category/')) {
         const category = path.split('/category/')[1];
         if (category === 'all') {
           title = "All Articles - Money Muse";
@@ -70,7 +87,7 @@ const Layout = () => {
     };
     
     updateMetaTags();
-  }, [location]);
+  }, [location, blogPost, isBlogPost]);
 
   return (
     <div className="flex flex-col min-h-screen">

@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
@@ -24,94 +25,116 @@ import ContactsPage from "./pages/ContactsPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { migrateMockDataToSupabase } from "@/services/blogService";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
-              <Route path="about" element={<AboutPage />} />
-              <Route path="contact" element={<ContactPage />} />
-              <Route path="resources" element={<ResourcesPage />} />
-              <Route path="privacy" element={<PrivacyPage />} />
-              <Route path="terms" element={<TermsPage />} />
-              <Route path="disclaimer" element={<DisclaimerPage />} />
-              <Route path="category/:categoryName" element={<CategoryPage />} />
-              <Route path="blog/:slug" element={<BlogDetailPage />} />
-              <Route path="login" element={<LoginPage />} />
-              
-              {/* Admin Routes */}
-              <Route 
-                path="admin/dashboard" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <AdminDashboardPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/posts" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <BlogManagementPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/categories" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <CategoriesManagementPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/posts/new" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <BlogEditorPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/posts/edit/:id" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <BlogEditorPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/subscribers" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <SubscribersPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/contacts" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <ContactsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </BrowserRouter>
-);
+const App = () => {
+  const [isMigrationComplete, setIsMigrationComplete] = useState(false);
+  
+  // Run migration when the app loads
+  useEffect(() => {
+    const migrateData = async () => {
+      try {
+        await migrateMockDataToSupabase();
+        setIsMigrationComplete(true);
+        console.log("Migration completed successfully");
+      } catch (error) {
+        console.error("Migration failed:", error);
+        // Even if migration fails, we still set this to true to prevent infinite retries
+        setIsMigrationComplete(true);
+      }
+    };
+    
+    migrateData();
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<HomePage />} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="contact" element={<ContactPage />} />
+                <Route path="resources" element={<ResourcesPage />} />
+                <Route path="privacy" element={<PrivacyPage />} />
+                <Route path="terms" element={<TermsPage />} />
+                <Route path="disclaimer" element={<DisclaimerPage />} />
+                <Route path="category/:categoryName" element={<CategoryPage />} />
+                <Route path="blog/:slug" element={<BlogDetailPage />} />
+                <Route path="login" element={<LoginPage />} />
+                
+                {/* Admin Routes */}
+                <Route 
+                  path="admin/dashboard" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <AdminDashboardPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="admin/posts" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <BlogManagementPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="admin/categories" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <CategoriesManagementPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="admin/posts/new" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <BlogEditorPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="admin/posts/edit/:id" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <BlogEditorPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="admin/subscribers" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <SubscribersPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="admin/contacts" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <ContactsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  );
+};
 
 export default App;

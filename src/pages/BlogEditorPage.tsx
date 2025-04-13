@@ -9,23 +9,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import PageHeader from "@/components/PageHeader";
 import RichTextEditor from "@/components/RichTextEditor";
-import { blogPosts } from "@/data/blogData";
-
-const categories = [
-  "Budgeting", 
-  "Investing", 
-  "Debt Management", 
-  "Retirement Planning", 
-  "Saving",
-  "Financial Planning",
-  "Real Estate"
-];
+import { categories } from "@/data/blogData";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchBlogPostBySlug, createBlogPost, updateBlogPost, BlogPost } from "@/services/blogService";
 
 const BlogEditorPage = () => {
   const { isAuthenticated, isAdmin } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const isEditMode = id && id !== "new";
   
   const [title, setTitle] = useState("");
@@ -34,24 +27,28 @@ const BlogEditorPage = () => {
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [author, setAuthor] = useState("Admin"); // Default author
+  const [date, setDate] = useState(() => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    return today.toLocaleDateString('en-US', options);
+  });
 
-  useEffect(() => {
-    if (!isAuthenticated || !isAdmin) {
-      navigate("/login");
-      return;
-    }
-
-    if (isEditMode) {
-      // Find the post to edit
-      const postToEdit = blogPosts.find(post => post.id === id);
-      if (postToEdit) {
-        setTitle(postToEdit.title);
-        setSlug(postToEdit.slug);
-        setCategory(postToEdit.category);
-        setExcerpt(postToEdit.excerpt);
-        setContent(postToEdit.content || "");
-        setImageUrl(postToEdit.imageUrl);
+  // Fetch post data if in edit mode
+  const { isLoading: isPostLoading } = useQuery({
+    queryKey: ['blog-post', id],
+    queryFn: () => fetchBlogPostBySlug(id as string),
+    enabled: isEditMode,
+    onSuccess: (data) => {
+      if (data) {
+        setTitle(data.title);
+        setSlug(data.slug);
+        setCategory(data.category);
+        setExcerpt(data.excerpt);
+        setContent(data.content || "");
+        setImageUrl(data.imageUrl);
+        setAuthor(data.author);
+        setDate(data.date);
       } else {
         toast({
           title: "Post not found",
@@ -60,8 +57,68 @@ const BlogEditorPage = () => {
         });
         navigate("/admin/posts");
       }
+    },
+    onError: (error) => {
+      console.error("Error fetching post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load the post. Please try again.",
+        variant: "destructive",
+      });
+      navigate("/admin/posts");
     }
-  }, [id, isAuthenticated, isAdmin, isEditMode, navigate, toast]);
+  });
+
+  // Create post mutation
+  const createMutation = useMutation({
+    mutationFn: createBlogPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      toast({
+        title: "Post created",
+        description: "The blog post has been created successfully",
+      });
+      navigate("/admin/posts");
+    },
+    onError: (error) => {
+      console.error("Error creating post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create the post. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Update post mutation
+  const updateMutation = useMutation({
+    mutationFn: ({ id, post }: { id: string; post: Partial<BlogPost> }) => 
+      updateBlogPost(id, post),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['blog-post', id] });
+      toast({
+        title: "Post updated",
+        description: "The blog post has been updated successfully",
+      });
+      navigate("/admin/posts");
+    },
+    onError: (error) => {
+      console.error("Error updating post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update the post. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  useEffect(() => {
+    if (!isAuthenticated || !isAdmin) {
+      navigate("/login");
+      return;
+    }
+  }, [isAuthenticated, isAdmin, navigate]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -89,7 +146,6 @@ const BlogEditorPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
     // Validate form
     if (!title || !slug || !category || !excerpt || !content) {
@@ -98,26 +154,32 @@ const BlogEditorPage = () => {
         description: "Please fill in all required fields",
         variant: "destructive",
       });
-      setIsLoading(false);
       return;
     }
     
-    // In a real app, you would save to a database
-    setTimeout(() => {
-      toast({
-        title: isEditMode ? "Post updated" : "Post created",
-        description: isEditMode 
-          ? "The blog post has been updated successfully" 
-          : "The blog post has been created successfully",
-      });
-      setIsLoading(false);
-      navigate("/admin/posts");
-    }, 1000);
+    const postData = {
+      title,
+      slug,
+      category,
+      excerpt,
+      content,
+      imageUrl,
+      author,
+      date
+    };
+    
+    if (isEditMode) {
+      updateMutation.mutate({ id: id as string, post: postData });
+    } else {
+      createMutation.mutate(postData as any);
+    }
   };
 
   if (!isAuthenticated || !isAdmin) {
     return null;
   }
+
+  const isLoading = isPostLoading || createMutation.isPending || updateMutation.isPending;
 
   return (
     <div>
@@ -172,11 +234,22 @@ const BlogEditorPage = () => {
                 >
                   <option value="">Select a category</option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
+                    <option key={cat.title} value={cat.title}>
+                      {cat.title}
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <Label htmlFor="author">Author</Label>
+                <Input
+                  id="author"
+                  value={author}
+                  onChange={(e) => setAuthor(e.target.value)}
+                  placeholder="Enter author name"
+                  required
+                />
               </div>
             </div>
             
@@ -216,6 +289,17 @@ const BlogEditorPage = () => {
                   onChange={(e) => setExcerpt(e.target.value)}
                   placeholder="Enter a short summary of your post"
                   className="h-24 resize-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="date">Publication Date</Label>
+                <Input
+                  id="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  placeholder="e.g., April 15, 2025"
                   required
                 />
               </div>

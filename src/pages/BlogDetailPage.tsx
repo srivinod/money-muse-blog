@@ -3,40 +3,45 @@ import React from 'react';
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Calendar, User, ArrowLeft } from "lucide-react";
-import { featuredPosts, latestPosts } from "@/data/blogData";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import AdSense from "@/components/AdSense";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBlogPostBySlug, fetchRelatedPosts, BlogPost } from "@/services/blogService";
 
 const BlogDetailPage = () => {
-  const { slug } = useParams();
-  const [post, setPost] = useState<any>(null);
-  const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
+  const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
   
-  useEffect(() => {
-    // Find the post with the matching slug from both featured and latest posts
-    const allPosts = [...featuredPosts, ...latestPosts];
-    const foundPost = allPosts.find(p => p.slug === slug);
-    
-    if (foundPost) {
-      setPost(foundPost);
-      
-      // Find related posts in the same category
-      const related = allPosts
-        .filter(p => p.category === foundPost.category && p.slug !== slug)
-        .slice(0, 3);
-      setRelatedPosts(related);
-    } else {
+  const { data: post, isLoading: isPostLoading, error: postError } = useQuery({
+    queryKey: ['blog-post', slug],
+    queryFn: () => fetchBlogPostBySlug(slug as string),
+    onError: (error) => {
       toast({
         title: "Post not found",
         description: "Sorry, we couldn't find the article you're looking for.",
         variant: "destructive"
       });
     }
-  }, [slug, toast]);
+  });
+  
+  const { data: relatedPosts = [], isLoading: isRelatedLoading } = useQuery({
+    queryKey: ['related-posts', slug, post?.category],
+    queryFn: () => fetchRelatedPosts(slug as string, post?.category as string),
+    enabled: !!post?.category,
+  });
 
-  if (!post) {
+  if (isPostLoading) {
+    return (
+      <div className="container-custom py-16">
+        <div className="text-center">
+          <p>Loading article...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (postError || !post) {
     return (
       <div className="container-custom py-16">
         <div className="text-center">
@@ -104,28 +109,8 @@ const BlogDetailPage = () => {
                 {post.excerpt}
               </p>
               
-              {/* Simulated blog content */}
-              <p className="mb-4">
-                Financial literacy is a cornerstone of a stable and secure future. Understanding how to manage your money effectively can make the difference between living paycheck to paycheck and building long-term wealth.
-              </p>
-              
-              <h2 className="text-2xl font-bold mt-8 mb-4">Why This Matters</h2>
-              <p className="mb-4">
-                In today's complex financial landscape, making informed decisions about your money is more important than ever. Whether you're saving for retirement, planning a major purchase, or simply trying to make ends meet, having a solid grasp of financial principles can help you achieve your goals.
-              </p>
-              
-              <h2 className="text-2xl font-bold mt-8 mb-4">Key Takeaways</h2>
-              <ul className="list-disc pl-6 mb-6">
-                <li className="mb-2">Start early and be consistent with your financial planning</li>
-                <li className="mb-2">Understand the power of compound interest and time in the market</li>
-                <li className="mb-2">Create a budget that aligns with your values and goals</li>
-                <li className="mb-2">Build an emergency fund before focusing on other financial goals</li>
-                <li className="mb-2">Regularly review and adjust your financial strategies</li>
-              </ul>
-              
-              <p className="mb-4">
-                Remember that financial wellness is a journey, not a destination. By taking small, consistent steps toward your goals, you can create a more secure and prosperous future for yourself and your loved ones.
-              </p>
+              {/* Render the actual content from the database */}
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </div>
           </CardContent>
         </Card>

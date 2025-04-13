@@ -8,7 +8,6 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import PageHeader from "@/components/PageHeader";
-import { blogPosts } from "@/data/blogData";
 import {
   Pagination,
   PaginationContent,
@@ -17,6 +16,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchBlogPosts, deleteBlogPost, BlogPost } from "@/services/blogService";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -24,9 +25,35 @@ const BlogManagementPage = () => {
   const { isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [posts, setPosts] = useState(blogPosts);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const queryClient = useQueryClient();
+  
+  // Fetch posts from Supabase
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ['blog-posts'],
+    queryFn: fetchBlogPosts,
+  });
+  
+  // Mutation for deleting posts
+  const deleteMutation = useMutation({
+    mutationFn: deleteBlogPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      toast({
+        title: "Post deleted",
+        description: "The blog post has been deleted successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error deleting post:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem deleting the post. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
   
   // Filter posts based on search term
   const filteredPosts = posts.filter(
@@ -55,11 +82,7 @@ const BlogManagementPage = () => {
 
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
-      setPosts(posts.filter(post => post.id !== id));
-      toast({
-        title: "Post deleted",
-        description: "The blog post has been deleted successfully",
-      });
+      deleteMutation.mutate(id);
     }
   };
   
@@ -73,6 +96,22 @@ const BlogManagementPage = () => {
 
   if (!isAuthenticated || !isAdmin) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container py-12 text-center">
+        <p>Loading posts...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container py-12 text-center">
+        <p className="text-red-500">Error loading posts. Please try again later.</p>
+      </div>
+    );
   }
 
   return (
@@ -136,7 +175,12 @@ const BlogManagementPage = () => {
                             <Edit className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Button size="sm" variant="outline" onClick={() => handleDelete(post.id)}>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleDelete(post.id)}
+                          disabled={deleteMutation.isPending}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>

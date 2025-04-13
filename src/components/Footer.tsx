@@ -126,8 +126,8 @@ const Footer = () => {
             &copy; {currentYear} Money Muse. All rights reserved.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="mailto:contact@moneymuse.com" className="text-gray-600 hover:text-primary text-sm flex items-center">
-              <Mail size={16} className="mr-1" /> contact@moneymuse.com
+            <a href="mailto:contact@finance90.com" className="text-gray-600 hover:text-primary text-sm flex items-center">
+              <Mail size={16} className="mr-1" /> contact@finance90.com
             </a>
           </div>
         </div>

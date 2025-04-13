@@ -45,17 +45,20 @@ const HomePage = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-white py-20 md:py-32 text-center">
+      <section className="relative bg-white py-20 md:py-15 text-center">
         <div className="absolute inset-0 bg-grid-white/10 bg-[length:20px_20px] z-0"></div>
         <div className="container-custom relative z-10">
           <div className="max-w-3xl mx-auto text-center text-gray-900">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+            <h1 className="text-4xl md:text-5xl font-bold mb-5 animate-fade-in">
               Master Your Money, <br />
               One Step at a Time
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-700">
+            <p className="text-xl md:text-xl mb-8 text-gray-700">
               Practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.
             </p>
+            <Link to="/category/all" className="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 rounded-md transition-colors duration-300">
+              Explore Our Articles
+            </Link>
           </div>
         </div>
       </section>
@@ -63,11 +66,8 @@ const HomePage = () => {
       {/* Featured Posts Section */}
       <section className="py-16 bg-gray-50">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Articles</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our most popular insights to help you navigate your financial journey
-            </p>
+          <div className="text-left mb-6">
+            <h2 className="text-3xl md:text-3xl font-bold mb-4">Featured Articles</h2> 
           </div>
           
           {isFeaturedLoading ? (
@@ -93,7 +93,7 @@ const HomePage = () => {
                       <img
                         src={featuredPosts[0]?.imageUrl || "/placeholder.svg"}
                         alt={featuredPosts[0]?.title || "Featured post"}
-                        className="w-full h-72 object-cover"
+                        className="w-full h-56 object-cover"
                       />
                       {featuredPosts[0]?.category && (
                         <Link 

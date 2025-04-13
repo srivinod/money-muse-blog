@@ -142,7 +142,7 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold">Email Us</h3>
-                    <p className="text-gray-600">contact@moneymuse.com</p>
+                    <p className="text-gray-600">contact@finance90.com</p>
                     <p className="text-gray-500 text-sm mt-1">We aim to respond within 24-48 hours on business days.</p>
                   </div>
                 </div>

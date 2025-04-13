@@ -1,9 +1,9 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { ThemeProvider } from "next-themes";
 import Layout from "./components/Layout";
 import ScrollToTop from "./components/ScrollToTop";
 import HomePage from "./pages/HomePage";
@@ -27,6 +27,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { migrateMockDataToSupabase } from "@/services/blogService";
+import { setupBlogStorage } from '@/services/blog';
 
 // Create QueryClient outside of component
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const queryClient = new QueryClient();
 const App = () => {
   // Use useState inside the component function
   const [isMigrationComplete, setIsMigrationComplete] = useState(false);
+  const [isStorageSetup, setIsStorageSetup] = useState(false);
   
   // Run migration when the app loads
   useEffect(() => {
@@ -50,6 +52,22 @@ const App = () => {
     };
     
     migrateData();
+  }, []);
+
+  useEffect(() => {
+    const initializeStorage = async () => {
+      try {
+        console.log("Initializing blog storage...");
+        await setupBlogStorage();
+        setIsStorageSetup(true);
+        console.log("Blog storage initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize blog storage:", error);
+        // Don't set isStorageSetup to true on error
+      }
+    };
+
+    initializeStorage();
   }, []);
 
   return (

@@ -8,18 +8,11 @@ const ResourcesPage = () => {
     <div>
       <PageHeader 
         title="Financial Resources"
-        description="Free tools, calculators, and templates to help you manage your money more effectively"
+        description="We've created tools & resources to help you implement the strategies we discuss in our articles. Each tool is designed to be practical, straightforward, and immediately useful."
       />
 
       <section className="py-16">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Tools to Power Your Financial Journey</h2>
-            <p className="text-gray-700">
-              We've created these resources to help you implement the strategies we discuss in our articles.
-              Each tool is designed to be practical, straightforward, and immediately useful.
-            </p>
-          </div>
+        <div className="container-custom"> 
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {resources.map((resource, index) => (

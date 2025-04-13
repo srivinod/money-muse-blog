@@ -1,13 +1,14 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import BlogPostCard from "@/components/BlogPostCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import AdSense from "@/components/AdSense";
-import { categories, latestPosts, featuredPosts } from "@/data/blogData";
+import { categories } from "@/data/blogData";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBlogPostsByCategory } from "@/services/blog/fetchPosts";
 
 const CategoryPage = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
@@ -22,31 +23,15 @@ const CategoryPage = () => {
   
   // If category not found, show all posts based on URL param
   const isAllCategory = categoryName === "all" || !currentCategory;
-  
-  // Combine all posts
-  const allPosts = [...featuredPosts, ...latestPosts];
+
+  // Fetch posts from the database
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ['blog-posts', selectedCategory],
+    queryFn: () => fetchBlogPostsByCategory(selectedCategory),
+  });
   
   // Filter posts based on selected category
-  const getFilteredPosts = () => {
-    // If we're on the "all" page and a specific category is selected
-    if (isAllCategory && selectedCategory !== "all") {
-      return allPosts.filter(
-        post => post.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory
-      );
-    }
-    
-    // If we're on a specific category page, only show that category
-    if (!isAllCategory) {
-      return allPosts.filter(
-        (post) => post.category.toLowerCase().replace(/\s+/g, '-') === categoryName
-      );
-    }
-    
-    // Otherwise show all posts
-    return allPosts;
-  };
-  
-  const filteredPosts = getFilteredPosts();
+  const filteredPosts = posts;
   
   // Calculate pagination
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
@@ -66,6 +51,26 @@ const CategoryPage = () => {
   const description = isAllCategory 
     ? "Browse all our articles about personal finance and money management"
     : currentCategory?.longDescription || "";
+
+  if (isLoading) {
+    return (
+      <div className="container-custom py-16">
+        <div className="text-center">
+          <p>Loading articles...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container-custom py-16">
+        <div className="text-center">
+          <p className="text-red-500">Error loading articles. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -131,13 +136,7 @@ const CategoryPage = () => {
                       author={post.author}
                       imageUrl={post.imageUrl}
                       slug={post.slug}
-                    />
-                    {/* Insert AdSense after every 3 posts */}
-                    {(index + 1) % 3 === 0 && index < currentPosts.length - 1 && (
-                      <div className="col-span-full my-6">
-                        <AdSense slot="4567890123" format="horizontal" />
-                      </div>
-                    )}
+                    /> 
                   </>
                 ))}
               </div>

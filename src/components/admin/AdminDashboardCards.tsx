@@ -53,7 +53,7 @@ const AdminDashboardCards = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Mail className="h-5 w-5" /> Newsletter Subscribers
+            Newsletter Subscribers
           </CardTitle>
           <CardDescription>View all newsletter subscribers</CardDescription>
         </CardHeader>
@@ -76,7 +76,7 @@ const AdminDashboardCards = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" /> Contact Forms
+             Contact Forms
           </CardTitle>
           <CardDescription>Review contact form submissions</CardDescription>
         </CardHeader>

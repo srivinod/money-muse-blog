@@ -123,7 +123,7 @@ const TermsPage = () => {
               <h2 className="text-2xl font-bold mt-8 mb-4">10. Contact Us</h2>
               
               <p>
-                If you have any questions about these Terms, please contact us at terms@moneymuse.com.
+                If you have any questions about these Terms, please contact us at terms@finance90.com.
               </p>
             </div>
           </div>

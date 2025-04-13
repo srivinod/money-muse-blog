@@ -107,7 +107,7 @@ const DisclaimerPage = () => {
                   Money Muse<br />
                   123 Financial Street<br />
                   New York, NY 10001<br />
-                  Email: legal@moneymuse.com
+                  Email: legal@finance90.com
                 </p>
               </div>
               

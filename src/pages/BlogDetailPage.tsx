@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -145,18 +144,15 @@ const BlogDetailPage = () => {
         {/* Related posts section */}
         {relatedPosts.length > 0 && (
           <section className="mt-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Related Articles</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-6">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((related, index) => (
-                <div key={index} className="border rounded-lg overflow-hidden shadow-md">
-                  <img 
-                    src={related.imageUrl} 
-                    alt={related.title} 
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-xl font-semibold mb-2">{related.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{related.excerpt}</p>
+                <div key={index} className="border rounded-lg overflow-hidden shadow-md flex flex-col h-full">
+                  <div className="p-4 flex-grow">
+                    <h3 className="text-lg font-semibold mb-2">{related.title}</h3>
+                    <p className="text-gray-600 text-sm mb-2">{related.excerpt}</p>
+                  </div>
+                  <div className="p-4 pt-0 border-t border-gray-100">
                     <Link 
                       to={`/blog/${related.slug}`} 
                       className="text-primary hover:underline"

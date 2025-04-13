@@ -40,7 +40,7 @@ const SeoSection = ({
             <div className="p-3 border rounded-md bg-gray-50">
               <div className="text-xl text-blue-700 mb-1 truncate">{metaTitle}</div>
               <div className="text-green-700 text-sm mb-1 truncate">
-                moneymuse.com/blog/{slug}
+                finance90.com/blog/{slug}
               </div>
               <div className="text-sm text-gray-700 truncate">
                 {metaDescription || excerpt || "No description provided."}

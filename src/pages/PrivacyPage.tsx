@@ -150,7 +150,7 @@ const PrivacyPage = () => {
               </p>
               
               <p>
-                Email: privacy@moneymuse.com
+                Email: privacy@finance90.com
               </p>
               
               <p>

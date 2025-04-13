@@ -5,7 +5,7 @@ User-agent: *
 Allow: /
 
 # Specify XML sitemap location
-Sitemap: https://moneymuse.com/sitemap.xml
+Sitemap: https://finance90.com/sitemap.xml
 
 # Disallow crawling of admin pages
 Disallow: /admin/

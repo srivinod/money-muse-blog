@@ -82,7 +82,7 @@ const Layout = () => {
       // Update canonical URL
       const canonical = document.querySelector('link[rel="canonical"]');
       if (canonical) {
-        canonical.setAttribute("href", `https://moneymuse.com${path}`);
+        canonical.setAttribute("href", `https://finance90.com${path}`);
       }
     };
     

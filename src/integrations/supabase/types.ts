@@ -53,6 +53,8 @@ export type Database = {
           featured: boolean | null
           id: string
           imageurl: string
+          meta_title: string | null
+          meta_description: string | null
           slug: string
           title: string
           updated_at: string
@@ -67,6 +69,8 @@ export type Database = {
           featured?: boolean | null
           id?: string
           imageurl: string
+          meta_title?: string | null
+          meta_description?: string | null
           slug: string
           title: string
           updated_at?: string
@@ -81,6 +85,8 @@ export type Database = {
           featured?: boolean | null
           id?: string
           imageurl?: string
+          meta_title?: string | null
+          meta_description?: string | null
           slug?: string
           title?: string
           updated_at?: string

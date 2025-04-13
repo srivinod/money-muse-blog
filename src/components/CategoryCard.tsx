@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 interface CategoryCardProps {
@@ -10,13 +9,15 @@ interface CategoryCardProps {
 
 const CategoryCard = ({ title, description, icon, slug }: CategoryCardProps) => {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-      <div className="flex flex-col items-center text-center">
+    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow h-full flex flex-col">
+      <div className="flex flex-col items-center text-center flex-grow">
         <div className="p-3 bg-primary/10 rounded-full mb-4">
           {icon}
         </div>
         <h3 className="text-xl font-bold mb-2">{title}</h3>
         <p className="text-gray-600 mb-4">{description}</p>
+      </div>
+      <div className="mt-auto pt-4 border-t border-gray-100 w-full">
         <Link
           to={`/category/${slug}`}
           className="text-primary hover:text-primary-dark font-medium inline-flex items-center transition-colors"

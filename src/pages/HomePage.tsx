@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import BlogPostCard from "@/components/BlogPostCard";
 import CategoryCard from "@/components/CategoryCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import AdSense from "@/components/AdSense";
 import { categories, featuredPosts, latestPosts } from "@/data/blogData";
 import { 
   Carousel,
@@ -40,6 +41,11 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* First AdSense placement - after hero section */}
+      <div className="container-custom">
+        <AdSense slot="3456789012" format="horizontal" />
+      </div>
 
       {/* Featured Posts Section */}
       <section className="py-16 bg-gray-50">
@@ -107,6 +113,9 @@ const HomePage = () => {
             </div>
           </div>
           
+          {/* Second AdSense placement - between featured sections */}
+          <AdSense slot="7890123456" />
+          
           {/* Additional Featured Posts in smaller cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {featuredPosts.slice(2, 5).map((post, index) => (
@@ -155,6 +164,11 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Third AdSense placement - before newsletter */}
+      <div className="container-custom">
+        <AdSense slot="5678901234" format="rectangle" />
+      </div>
+
       {/* Newsletter Section */}
       <NewsletterSignup />
 
@@ -170,16 +184,24 @@ const HomePage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {latestPosts.slice(0, 6).map((post, index) => (
-              <BlogPostCard 
-                key={index}
-                title={post.title}
-                excerpt={post.excerpt}
-                category={post.category}
-                date={post.date}
-                author={post.author}
-                imageUrl={post.imageUrl}
-                slug={post.slug}
-              />
+              // Insert an ad after every 3 articles in the latest posts section
+              <>
+                <BlogPostCard 
+                  key={index}
+                  title={post.title}
+                  excerpt={post.excerpt}
+                  category={post.category}
+                  date={post.date}
+                  author={post.author}
+                  imageUrl={post.imageUrl}
+                  slug={post.slug}
+                />
+                {index === 2 && (
+                  <div className="col-span-full my-6">
+                    <AdSense slot="9012345678" format="horizontal" />
+                  </div>
+                )}
+              </>
             ))}
           </div>
 

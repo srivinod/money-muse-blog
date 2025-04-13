@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/data/blogData";
 
@@ -86,6 +85,8 @@ export const fetchLatestPosts = async (): Promise<BlogPost[]> => {
 
 // Fetch a single blog post by slug
 export const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
+  console.log(`Fetching blog post with slug ${slug}`);
+  
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
@@ -95,12 +96,15 @@ export const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null
   if (error) {
     if (error.code === "PGRST116") {
       // No rows returned error code
+      console.log(`No blog post found with slug ${slug}`);
       return null;
     }
     console.error(`Error fetching blog post with slug ${slug}:`, error);
     throw error;
   }
 
+  console.log(`Successfully fetched blog post: ${data.title}`);
+  
   return {
     ...data,
     imageUrl: data.imageurl,

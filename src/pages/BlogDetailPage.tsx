@@ -24,13 +24,19 @@ const BlogDetailPage = () => {
           variant: "destructive"
         });
       }
-    }
+    },
+    // Disable caching to always fetch fresh data from Supabase
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: 'always',
   });
   
   const { data: relatedPosts = [], isLoading: isRelatedLoading } = useQuery({
     queryKey: ['related-posts', slug, post?.category],
     queryFn: () => fetchRelatedPosts(slug as string, post?.category as string),
     enabled: !!post?.category,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   useEffect(() => {

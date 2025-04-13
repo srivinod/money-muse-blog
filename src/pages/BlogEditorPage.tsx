@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -41,6 +40,7 @@ const BlogEditorPage = () => {
     queryKey: ['blog-post', id],
     queryFn: () => fetchBlogPostById(id as string),
     enabled: isEditMode,
+    // Disable caching to always fetch fresh data
     gcTime: 0,
     staleTime: 0,
   });
@@ -65,6 +65,7 @@ const BlogEditorPage = () => {
   const createMutation = useMutation({
     mutationFn: createBlogPost,
     onSuccess: () => {
+      // Invalidate all blog posts queries to ensure fresh data
       queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
       toast({
         title: "Post created",
@@ -86,9 +87,16 @@ const BlogEditorPage = () => {
   const updateMutation = useMutation({
     mutationFn: ({ id, post }: { id: string; post: Partial<BlogPost> }) => 
       updateBlogPost(id, post),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate all queries that might use this post data
       queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
       queryClient.invalidateQueries({ queryKey: ['blog-post', id] });
+      
+      // Also invalidate by slug to ensure the detail page gets updated
+      if (data && data.slug) {
+        queryClient.invalidateQueries({ queryKey: ['blog-post', data.slug] });
+      }
+      
       toast({
         title: "Post updated",
         description: "The blog post has been updated successfully",

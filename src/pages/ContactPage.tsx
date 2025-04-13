@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
@@ -25,8 +26,10 @@ const ContactPage = () => {
     setIsSubmitting(true);
     
     try {
+      console.log("Submitting form data:", formData);
+      
       // Insert data into Supabase
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('contact_submissions')
         .insert([
           {
@@ -36,7 +39,12 @@ const ContactPage = () => {
           }
         ]);
       
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
+      console.log("Form submission successful:", data);
       
       toast({
         title: "Message Sent!",

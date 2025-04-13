@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/data/blogData";
 
@@ -38,7 +39,7 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   return data.map(post => ({
     ...post,
     imageUrl: post.imageurl, // Fix the casing difference between DB and client
-    featured: post.featured || false
+    featured: Boolean(post.featured) // Ensure featured is a boolean
   }));
 };
 
@@ -78,7 +79,8 @@ export const fetchLatestPosts = async (): Promise<BlogPost[]> => {
 
   return data.map(post => ({
     ...post,
-    imageUrl: post.imageurl
+    imageUrl: post.imageurl,
+    featured: Boolean(post.featured)
   }));
 };
 
@@ -101,7 +103,8 @@ export const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null
 
   return {
     ...data,
-    imageUrl: data.imageurl
+    imageUrl: data.imageurl,
+    featured: Boolean(data.featured)
   };
 };
 
@@ -125,7 +128,7 @@ export const fetchBlogPostById = async (id: string): Promise<BlogPost | null> =>
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: data.featured || false
+    featured: Boolean(data.featured)
   };
 };
 
@@ -156,7 +159,8 @@ export const fetchBlogPostsByCategory = async (categorySlug: string): Promise<Bl
 
   return data.map(post => ({
     ...post,
-    imageUrl: post.imageurl
+    imageUrl: post.imageurl,
+    featured: Boolean(post.featured)
   }));
 };
 
@@ -177,7 +181,8 @@ export const fetchRelatedPosts = async (slug: string, category: string): Promise
 
   return data.map(post => ({
     ...post,
-    imageUrl: post.imageurl
+    imageUrl: post.imageurl,
+    featured: Boolean(post.featured)
   }));
 };
 
@@ -206,7 +211,7 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: data.featured || false
+    featured: Boolean(data.featured)
   };
 };
 
@@ -235,7 +240,7 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
   return {
     ...data,
     imageUrl: data.imageurl,
-    featured: data.featured || false
+    featured: Boolean(data.featured)
   };
 };
 
@@ -289,7 +294,8 @@ export const migrateMockDataToSupabase = async () => {
       category: post.category,
       author: post.author,
       date: post.date,
-      imageurl: post.imageUrl // Note the lowercase 'url'
+      imageurl: post.imageUrl, // Note the lowercase 'url'
+      featured: false // Default featured to false
     }));
 
     // Insert all posts

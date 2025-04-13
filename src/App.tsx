@@ -27,9 +27,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { migrateMockDataToSupabase } from "@/services/blogService";
 
+// Create QueryClient outside of component
 const queryClient = new QueryClient();
 
 const App = () => {
+  // Use useState inside the component function
   const [isMigrationComplete, setIsMigrationComplete] = useState(false);
   
   // Run migration when the app loads

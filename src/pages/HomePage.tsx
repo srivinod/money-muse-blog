@@ -40,26 +40,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Introduction Section */}
-      <section className="py-16 bg-white">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Welcome to Money Muse</h2>
-            <p className="text-xl text-gray-700 mb-8">
-              Money Muse is your trusted companion on the journey to financial literacy and freedom. 
-              We believe that managing money doesn't have to be complicated or stressful. 
-              Through straightforward advice, practical strategies, and real-life success stories, 
-              we're here to help you take control of your finances with confidence.
-            </p>
-            <div className="flex justify-center">
-              <Link to="/about" className="btn-primary">
-                Learn More About Us
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Posts Section */}
       <section className="py-16 bg-gray-50">
         <div className="container-custom">

@@ -1,5 +1,4 @@
-
-import React from 'react';  // Add this import at the top of the file
+import React from 'react';  // Ensure React is imported at the top
 import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark, Calendar, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import BlogPostCard from "@/components/BlogPostCard";

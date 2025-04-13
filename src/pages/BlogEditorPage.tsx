@@ -35,44 +35,28 @@ const BlogEditorPage = () => {
   });
 
   // Fetch post data if in edit mode
-  const { isLoading: isPostLoading } = useQuery({
+  const { data: postData, isLoading: isPostLoading } = useQuery({
     queryKey: ['blog-post', id],
     queryFn: () => fetchBlogPostById(id as string),
     enabled: isEditMode,
     gcTime: 0,
     staleTime: 0,
-    meta: {
-      onSuccess: (data: BlogPost | null) => {
-        if (data) {
-          setTitle(data.title);
-          setSlug(data.slug);
-          setCategory(data.category);
-          setExcerpt(data.excerpt);
-          setContent(data.content || "");
-          setImageUrl(data.imageUrl);
-          setAuthor(data.author);
-          setDate(data.date);
-        } else {
-          toast({
-            title: "Post not found",
-            description: "The blog post you're trying to edit doesn't exist",
-            variant: "destructive",
-          });
-          navigate("/admin/posts");
-        }
-      },
-      onError: (error: any) => {
-        console.error("Error fetching post:", error);
-        toast({
-          title: "Post not found",
-          description: "The blog post you're trying to edit doesn't exist",
-          variant: "destructive",
-        });
-        navigate("/admin/posts");
-      }
-    },
-    retry: 1,
   });
+
+  // Update form fields when post data is loaded
+  useEffect(() => {
+    if (postData) {
+      console.log("Post data loaded:", postData);
+      setTitle(postData.title || "");
+      setSlug(postData.slug || "");
+      setCategory(postData.category || "");
+      setExcerpt(postData.excerpt || "");
+      setContent(postData.content || "");
+      setImageUrl(postData.imageUrl || "");
+      setAuthor(postData.author || "Admin");
+      setDate(postData.date || "");
+    }
+  }, [postData]);
 
   // Create post mutation
   const createMutation = useMutation({

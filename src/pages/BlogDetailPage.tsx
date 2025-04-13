@@ -33,6 +33,14 @@ const BlogDetailPage = () => {
     enabled: !!post?.category,
   });
 
+  useEffect(() => {
+    // Log the post data to help debug content issues
+    if (post) {
+      console.log("Post data loaded:", post);
+      console.log("Post content:", post.content);
+    }
+  }, [post]);
+
   if (isPostLoading) {
     return (
       <div className="container-custom py-16">
@@ -80,11 +88,13 @@ const BlogDetailPage = () => {
         </div>
         
         <Card className="overflow-hidden border-none shadow-md">
-          <img 
-            src={post.imageUrl} 
-            alt={post.title}
-            className="w-full h-[400px] object-cover"
-          />
+          {post.imageUrl && (
+            <img 
+              src={post.imageUrl} 
+              alt={post.title}
+              className="w-full h-[400px] object-cover"
+            />
+          )}
           
           <CardContent className="p-8">
             <h1 className="text-3xl font-bold mb-6">{post.title}</h1>
@@ -107,12 +117,21 @@ const BlogDetailPage = () => {
             </div>
             
             <div className="prose prose-lg max-w-none">
-              <p className="text-lg text-gray-700 mb-4">
-                {post.excerpt}
-              </p>
+              {post.excerpt && (
+                <p className="text-lg text-gray-700 mb-4">
+                  {post.excerpt}
+                </p>
+              )}
               
-              {/* Render the actual content from the database */}
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              {/* Render the content from Supabase */}
+              {post.content ? (
+                <div 
+                  dangerouslySetInnerHTML={{ __html: post.content }} 
+                  className="mt-6"
+                />
+              ) : (
+                <p className="text-gray-500 italic">No content available for this article.</p>
+              )}
             </div>
           </CardContent>
         </Card>

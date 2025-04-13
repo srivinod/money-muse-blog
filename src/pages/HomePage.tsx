@@ -12,6 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious
 } from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
 
 const HomePage = () => {
   return (
@@ -70,45 +71,114 @@ const HomePage = () => {
             </p>
           </div>
           
-          {/* First row - large featured post */}
-          <div className="mb-10">
-            <BlogPostCard 
-              key="featured-main"
-              title={featuredPosts[0].title}
-              excerpt={featuredPosts[0].excerpt}
-              category={featuredPosts[0].category}
-              date={featuredPosts[0].date}
-              author={featuredPosts[0].author}
-              imageUrl={featuredPosts[0].imageUrl}
-              slug={featuredPosts[0].slug}
-              featured={true}
-            />
+          {/* New Featured Layout - Grid with spotlight */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Featured Post - Takes up 2 columns */}
+            <div className="lg:col-span-2 lg:row-span-2">
+              <Card className="overflow-hidden h-full shadow-md hover:shadow-lg transition-all duration-300">
+                <div className="relative">
+                  <img
+                    src={featuredPosts[0].imageUrl}
+                    alt={featuredPosts[0].title}
+                    className="w-full h-72 object-cover"
+                  />
+                  <Link 
+                    to={`/category/${featuredPosts[0].category.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="absolute top-4 left-4 bg-primary/90 text-white text-xs font-medium px-3 py-1 rounded-full"
+                  >
+                    {featuredPosts[0].category}
+                  </Link>
+                </div>
+                <CardContent className="p-6">
+                  <Link to={`/blog/${featuredPosts[0].slug}`}>
+                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 hover:text-primary transition-colors mb-4">
+                      {featuredPosts[0].title}
+                    </h3>
+                  </Link>
+                  <p className="text-gray-600 mb-6 text-lg">
+                    {featuredPosts[0].excerpt}
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={14} className="mr-1" />
+                      <span>{featuredPosts[0].date}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <User size={14} className="mr-1" />
+                      <span>{featuredPosts[0].author}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Secondary Featured Posts - Side grid */}
+            {featuredPosts.slice(1, 5).map((post, index) => (
+              <Card key={index} className="overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
+                <div className="relative">
+                  <img
+                    src={post.imageUrl}
+                    alt={post.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <Link 
+                    to={`/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="absolute top-4 left-4 bg-primary/90 text-white text-xs font-medium px-3 py-1 rounded-full"
+                  >
+                    {post.category}
+                  </Link>
+                </div>
+                <CardContent className="p-4">
+                  <Link to={`/blog/${post.slug}`}>
+                    <h3 className="text-lg font-bold text-gray-900 hover:text-primary transition-colors mb-2">
+                      {post.title}
+                    </h3>
+                  </Link>
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={12} />
+                      <span>{post.date}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <User size={12} />
+                      <span>{post.author}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
-          {/* Second row - carousel for other featured posts */}
-          <div className="mt-12">
-            <Carousel className="w-full">
-              <CarouselContent>
-                {featuredPosts.slice(1).map((post, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                    <BlogPostCard 
-                      title={post.title}
-                      excerpt={post.excerpt}
-                      category={post.category}
-                      date={post.date}
-                      author={post.author}
-                      imageUrl={post.imageUrl}
-                      slug={post.slug}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="flex justify-center mt-6">
-                <CarouselPrevious className="relative static left-0 translate-y-0 mr-2" />
-                <CarouselNext className="relative static right-0 translate-y-0 ml-2" />
-              </div>
-            </Carousel>
-          </div>
+          {/* Remaining Featured Posts Carousel */}
+          {featuredPosts.length > 5 && (
+            <div className="mt-12">
+              <h3 className="text-xl font-bold mb-6">More Featured Stories</h3>
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {featuredPosts.slice(5).map((post, index) => (
+                    <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                      <BlogPostCard 
+                        title={post.title}
+                        excerpt={post.excerpt}
+                        category={post.category}
+                        date={post.date}
+                        author={post.author}
+                        imageUrl={post.imageUrl}
+                        slug={post.slug}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <div className="flex justify-center mt-6">
+                  <CarouselPrevious className="relative static left-0 translate-y-0 mr-2" />
+                  <CarouselNext className="relative static right-0 translate-y-0 ml-2" />
+                </div>
+              </Carousel>
+            </div>
+          )}
 
           <div className="text-center mt-12">
             <Link to="/category/all" className="btn-outline">

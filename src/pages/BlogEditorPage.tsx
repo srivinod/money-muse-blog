@@ -12,6 +12,7 @@ import RichTextEditor from "@/components/RichTextEditor";
 import { categories } from "@/data/blogData";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchBlogPostById, createBlogPost, updateBlogPost, BlogPost } from "@/services/blogService";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const BlogEditorPage = () => {
   const { isAuthenticated, isAdmin } = useAuth();
@@ -28,6 +29,7 @@ const BlogEditorPage = () => {
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [author, setAuthor] = useState("Admin"); // Default author
+  const [featured, setFeatured] = useState(false); // Add featured state
   const [date, setDate] = useState(() => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -55,6 +57,7 @@ const BlogEditorPage = () => {
       setImageUrl(postData.imageUrl || "");
       setAuthor(postData.author || "Admin");
       setDate(postData.date || "");
+      setFeatured(postData.featured || false); // Set featured status
     }
   }, [postData]);
 
@@ -154,7 +157,8 @@ const BlogEditorPage = () => {
       content,
       imageUrl,
       author,
-      date
+      date,
+      featured // Include featured status in post data
     };
     
     if (isEditMode) {
@@ -239,6 +243,20 @@ const BlogEditorPage = () => {
                   placeholder="Enter author name"
                   required
                 />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="featured" 
+                  checked={featured} 
+                  onCheckedChange={(checked) => setFeatured(checked as boolean)}
+                />
+                <Label 
+                  htmlFor="featured" 
+                  className="text-sm font-medium leading-none cursor-pointer"
+                >
+                  Featured Post
+                </Label>
               </div>
             </div>
             

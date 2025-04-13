@@ -11,6 +11,7 @@ export type BlogPost = {
   author: string;
   date: string;
   imageUrl: string;
+  featured?: boolean;
 };
 
 export type BlogCategory = {
@@ -36,7 +37,8 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
 
   return data.map(post => ({
     ...post,
-    imageUrl: post.imageurl // Fix the casing difference between DB and client
+    imageUrl: post.imageurl, // Fix the casing difference between DB and client
+    featured: post.featured || false
   }));
 };
 
@@ -45,6 +47,7 @@ export const fetchFeaturedPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
+    .eq("featured", true)
     .order("date", { ascending: false })
     .limit(6);
 
@@ -55,7 +58,8 @@ export const fetchFeaturedPosts = async (): Promise<BlogPost[]> => {
 
   return data.map(post => ({
     ...post,
-    imageUrl: post.imageurl
+    imageUrl: post.imageurl,
+    featured: true
   }));
 };
 
@@ -120,7 +124,8 @@ export const fetchBlogPostById = async (id: string): Promise<BlogPost | null> =>
 
   return {
     ...data,
-    imageUrl: data.imageurl
+    imageUrl: data.imageurl,
+    featured: data.featured || false
   };
 };
 
@@ -181,7 +186,8 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
   // Convert imageUrl to imageurl for the database
   const dbPost = {
     ...post,
-    imageurl: post.imageUrl
+    imageurl: post.imageUrl,
+    featured: post.featured || false
   };
   
   delete (dbPost as any).imageUrl;
@@ -199,7 +205,8 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
 
   return {
     ...data,
-    imageUrl: data.imageurl
+    imageUrl: data.imageurl,
+    featured: data.featured || false
   };
 };
 
@@ -227,7 +234,8 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
 
   return {
     ...data,
-    imageUrl: data.imageurl
+    imageUrl: data.imageurl,
+    featured: data.featured || false
   };
 };
 

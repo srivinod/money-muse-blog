@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
@@ -16,8 +16,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Switch } from "@/components/ui/switch";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchBlogPosts, deleteBlogPost, BlogPost } from "@/services/blogService";
+import { fetchBlogPosts, deleteBlogPost, updateBlogPost, BlogPost } from "@/services/blogService";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -50,6 +51,27 @@ const BlogManagementPage = () => {
       toast({
         title: "Error",
         description: "There was a problem deleting the post. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Mutation for updating post featured status
+  const updateFeaturedMutation = useMutation({
+    mutationFn: ({ id, featured }: { id: string; featured: boolean }) => 
+      updateBlogPost(id, { featured }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      toast({
+        title: "Post updated",
+        description: "The featured status has been updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating featured status:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem updating the post. Please try again.",
         variant: "destructive",
       });
     }
@@ -92,6 +114,10 @@ const BlogManagementPage = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleFeaturedToggle = (id: string, currentFeatured: boolean) => {
+    updateFeaturedMutation.mutate({ id, featured: !currentFeatured });
   };
 
   if (!isAuthenticated || !isAdmin) {
@@ -153,6 +179,7 @@ const BlogManagementPage = () => {
                 <TableHead>Category</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Featured</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -166,6 +193,16 @@ const BlogManagementPage = () => {
                     <TableCell>
                       <div className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                         Published
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Switch 
+                          checked={post.featured || false}
+                          onCheckedChange={() => handleFeaturedToggle(post.id, post.featured || false)}
+                          disabled={updateFeaturedMutation.isPending}
+                        />
+                        {post.featured && <Star className="h-4 w-4 text-yellow-500 ml-2" />}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -189,7 +226,7 @@ const BlogManagementPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-6 text-gray-500">
                     {searchTerm ? "No posts found matching your search." : "No posts available."}
                   </TableCell>
                 </TableRow>

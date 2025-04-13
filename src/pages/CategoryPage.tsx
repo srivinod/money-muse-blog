@@ -1,29 +1,14 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import BlogPostCard from "@/components/BlogPostCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { categories, latestPosts, featuredPosts } from "@/data/blogData";
-import { Filter, SlidersHorizontal } from "lucide-react";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
 
 const CategoryPage = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedDate, setSelectedDate] = useState<string>("all");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryName || "all");
   
   // Find the current category
   const currentCategory = categories.find(
@@ -36,43 +21,24 @@ const CategoryPage = () => {
   // Combine all posts
   const allPosts = [...featuredPosts, ...latestPosts];
   
-  // Get unique months from post dates
-  const getUniqueDates = () => {
-    const dates = allPosts.map(post => {
-      const date = new Date(post.date);
-      return `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
-    });
-    return ["all", ...Array.from(new Set(dates))];
-  };
-  
-  const uniqueDates = getUniqueDates();
-  
-  // Filter posts based on selected filters and URL param
+  // Filter posts based on selected category
   const getFilteredPosts = () => {
-    // Start with the base filter from URL
-    let filtered = isAllCategory
-      ? allPosts
-      : allPosts.filter(
-          (post) => post.category.toLowerCase().replace(/\s+/g, '-') === categoryName
-        );
-    
-    // Apply selected category filter if not "all" and if we're on the all posts page
+    // If we're on the "all" page and a specific category is selected
     if (isAllCategory && selectedCategory !== "all") {
-      filtered = filtered.filter(
+      return allPosts.filter(
         post => post.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory
       );
     }
     
-    // Apply date filter if not "all"
-    if (selectedDate !== "all") {
-      filtered = filtered.filter(post => {
-        const postDate = new Date(post.date);
-        const formattedDate = `${postDate.toLocaleString('default', { month: 'long' })} ${postDate.getFullYear()}`;
-        return formattedDate === selectedDate;
-      });
+    // If we're on a specific category page, only show that category
+    if (!isAllCategory) {
+      return allPosts.filter(
+        (post) => post.category.toLowerCase().replace(/\s+/g, '-') === categoryName
+      );
     }
     
-    return filtered;
+    // Otherwise show all posts
+    return allPosts;
   };
   
   const filteredPosts = getFilteredPosts();
@@ -89,91 +55,31 @@ const CategoryPage = () => {
 
       <section className="py-8">
         <div className="container-custom">
-          {/* Filter controls */}
-          <div className="mb-8">
-            <Collapsible 
-              open={isFilterOpen}
-              onOpenChange={setIsFilterOpen}
-              className="w-full space-y-4"
-            >
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                  <Filter className="h-5 w-5" />
-                  Filter Articles
-                </h2>
-                <CollapsibleTrigger asChild>
-                  <button className="flex items-center gap-1 text-sm text-primary font-medium hover:text-primary/80 transition-colors">
-                    <SlidersHorizontal className="h-4 w-4" />
-                    {isFilterOpen ? "Hide Filters" : "Show Filters"}
-                  </button>
-                </CollapsibleTrigger>
+          {/* Show category filter buttons only on All Articles page */}
+          {isAllCategory && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">Filter by Category</h2>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={selectedCategory === "all" ? "default" : "outline"}
+                  onClick={() => setSelectedCategory("all")}
+                  className="mb-2"
+                >
+                  All Categories
+                </Button>
+                {categories.map((category) => (
+                  <Button
+                    key={category.slug}
+                    variant={selectedCategory === category.slug ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(category.slug)}
+                    className="mb-2"
+                  >
+                    {category.title}
+                  </Button>
+                ))}
               </div>
-              
-              <CollapsibleContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {isAllCategory && (
-                    <div>
-                      <label htmlFor="category-filter" className="block text-sm font-medium mb-2">
-                        Category
-                      </label>
-                      <Select 
-                        value={selectedCategory} 
-                        onValueChange={setSelectedCategory}
-                      >
-                        <SelectTrigger id="category-filter" className="w-full">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Categories</SelectItem>
-                          {categories.map((category) => (
-                            <SelectItem key={category.slug} value={category.slug}>
-                              {category.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  
-                  <div>
-                    <label htmlFor="date-filter" className="block text-sm font-medium mb-2">
-                      Date
-                    </label>
-                    <Select 
-                      value={selectedDate} 
-                      onValueChange={setSelectedDate}
-                    >
-                      <SelectTrigger id="date-filter" className="w-full">
-                        <SelectValue placeholder="Select a date" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Dates</SelectItem>
-                        {uniqueDates.filter(date => date !== "all").map((date) => (
-                          <SelectItem key={date} value={date}>
-                            {date}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                {(selectedCategory !== "all" || selectedDate !== "all") && (
-                  <div className="flex justify-end">
-                    <button 
-                      onClick={() => {
-                        setSelectedCategory("all");
-                        setSelectedDate("all");
-                      }}
-                      className="text-sm text-primary hover:text-primary/80 transition-colors"
-                    >
-                      Clear Filters
-                    </button>
-                  </div>
-                )}
-              </CollapsibleContent>
-            </Collapsible>
-          </div>
+            </div>
+          )}
           
           {/* Results count */}
           <div className="mb-6">
@@ -201,17 +107,13 @@ const CategoryPage = () => {
             <div className="text-center py-16 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-bold mb-4">No articles found</h3>
               <p className="text-gray-600 mb-6">
-                Try adjusting your filters to find more articles.
+                Try selecting a different category to find more articles.
               </p>
-              <button 
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSelectedDate("all");
-                }}
-                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+              <Button 
+                onClick={() => setSelectedCategory("all")}
               >
-                Reset Filters
-              </button>
+                Show All Articles
+              </Button>
             </div>
           )}
         </div>

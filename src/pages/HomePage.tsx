@@ -29,11 +29,7 @@ const HomePage = () => {
             <p className="text-xl md:text-2xl mb-8 text-gray-700">
               Practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/category/saving" className="bg-primary text-white hover:bg-primary/90 font-semibold px-6 py-3 rounded-md transition-colors duration-300">
-                Start Saving
-              </Link>
-            </div>
+            {/* Removed Start Saving button */}
           </div>
         </div>
       </section>

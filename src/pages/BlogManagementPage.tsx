@@ -1,25 +1,57 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import PageHeader from "@/components/PageHeader";
 import { blogPosts } from "@/data/blogData";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 5;
 
 const BlogManagementPage = () => {
   const { isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [posts, setPosts] = useState(blogPosts);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  // Filter posts based on search term
+  const filteredPosts = posts.filter(
+    (post) =>
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredPosts.length / ITEMS_PER_PAGE);
+  const currentPosts = filteredPosts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
       navigate("/login");
     }
   }, [isAuthenticated, isAdmin, navigate]);
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -29,6 +61,14 @@ const BlogManagementPage = () => {
         description: "The blog post has been deleted successfully",
       });
     }
+  };
+  
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   if (!isAuthenticated || !isAdmin) {
@@ -43,10 +83,21 @@ const BlogManagementPage = () => {
       />
       
       <div className="container py-12">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <Link to="/admin/dashboard">
             <Button variant="outline">Back to Dashboard</Button>
           </Link>
+          
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Input
+              placeholder="Search posts..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="pl-8 w-full"
+            />
+          </div>
+          
           <Link to="/admin/posts/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -55,7 +106,7 @@ const BlogManagementPage = () => {
           </Link>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
           <Table>
             <TableHeader>
               <TableRow>
@@ -67,33 +118,73 @@ const BlogManagementPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {posts.map((post) => (
-                <TableRow key={post.id}>
-                  <TableCell className="font-medium">{post.title}</TableCell>
-                  <TableCell>{post.category}</TableCell>
-                  <TableCell>{post.date}</TableCell>
-                  <TableCell>
-                    <div className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Published
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Link to={`/admin/posts/edit/${post.id}`}>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
+              {currentPosts.length > 0 ? (
+                currentPosts.map((post) => (
+                  <TableRow key={post.id}>
+                    <TableCell className="font-medium">{post.title}</TableCell>
+                    <TableCell>{post.category}</TableCell>
+                    <TableCell>{post.date}</TableCell>
+                    <TableCell>
+                      <div className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        Published
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Link to={`/admin/posts/edit/${post.id}`}>
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Button size="sm" variant="outline" onClick={() => handleDelete(post.id)}>
+                          <Trash2 className="h-4 w-4" />
                         </Button>
-                      </Link>
-                      <Button size="sm" variant="outline" onClick={() => handleDelete(post.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                    {searchTerm ? "No posts found matching your search." : "No posts available."}
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>
+        
+        {totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              
+              {[...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    isActive={currentPage === index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className="cursor-pointer"
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </div>
   );

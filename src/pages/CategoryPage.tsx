@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
@@ -6,10 +7,13 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import AdSense from "@/components/AdSense";
 import { categories, latestPosts, featuredPosts } from "@/data/blogData";
 import { Button } from "@/components/ui/button";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const CategoryPage = () => {
   const { categoryName } = useParams<{ categoryName: string }>();
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryName || "all");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const postsPerPage = 6; // Number of posts to display per page
   
   // Find the current category
   const currentCategory = categories.find(
@@ -43,6 +47,19 @@ const CategoryPage = () => {
   };
   
   const filteredPosts = getFilteredPosts();
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  
+  // Handle page change
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Create title and description
   const title = isAllCategory ? "All Articles" : currentCategory?.title || "Articles";
@@ -68,7 +85,10 @@ const CategoryPage = () => {
               <div className="flex flex-wrap gap-2 justify-center"> {/* Added justify-center */}
                 <Button
                   variant={selectedCategory === "all" ? "default" : "outline"}
-                  onClick={() => setSelectedCategory("all")}
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setCurrentPage(1); // Reset to first page when changing category
+                  }}
                   className="mb-2"
                 >
                   All Categories
@@ -77,7 +97,10 @@ const CategoryPage = () => {
                   <Button
                     key={category.slug}
                     variant={selectedCategory === category.slug ? "default" : "outline"}
-                    onClick={() => setSelectedCategory(category.slug)}
+                    onClick={() => {
+                      setSelectedCategory(category.slug);
+                      setCurrentPage(1); // Reset to first page when changing category
+                    }}
                     className="mb-2"
                   >
                     {category.title}
@@ -90,14 +113,14 @@ const CategoryPage = () => {
           {/* Results count */}
           <div className="mb-6">
             <p className="text-sm text-gray-600">
-              Showing {filteredPosts.length} article{filteredPosts.length !== 1 && 's'}
+              Showing {indexOfFirstPost + 1}-{Math.min(indexOfLastPost, filteredPosts.length)} of {filteredPosts.length} article{filteredPosts.length !== 1 && 's'}
             </p>
           </div>
 
           {filteredPosts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredPosts.map((post, index) => (
+                {currentPosts.map((post, index) => (
                   <>
                     <BlogPostCard
                       key={index}
@@ -110,7 +133,7 @@ const CategoryPage = () => {
                       slug={post.slug}
                     />
                     {/* Insert AdSense after every 3 posts */}
-                    {(index + 1) % 3 === 0 && index < filteredPosts.length - 1 && (
+                    {(index + 1) % 3 === 0 && index < currentPosts.length - 1 && (
                       <div className="col-span-full my-6">
                         <AdSense slot="4567890123" format="horizontal" />
                       </div>
@@ -118,6 +141,49 @@ const CategoryPage = () => {
                   </>
                 ))}
               </div>
+              
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-12">
+                  <Pagination>
+                    <PaginationContent>
+                      {currentPage > 1 && (
+                        <PaginationItem>
+                          <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} />
+                        </PaginationItem>
+                      )}
+                      
+                      {Array.from({ length: totalPages }).map((_, index) => {
+                        const pageNumber = index + 1;
+                        // Show first, last, and current page with its neighbors
+                        if (
+                          pageNumber === 1 ||
+                          pageNumber === totalPages ||
+                          (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                        ) {
+                          return (
+                            <PaginationItem key={pageNumber}>
+                              <PaginationLink
+                                isActive={pageNumber === currentPage}
+                                onClick={() => handlePageChange(pageNumber)}
+                              >
+                                {pageNumber}
+                              </PaginationLink>
+                            </PaginationItem>
+                          );
+                        }
+                        return null;
+                      })}
+                      
+                      {currentPage < totalPages && (
+                        <PaginationItem>
+                          <PaginationNext onClick={() => handlePageChange(currentPage + 1)} />
+                        </PaginationItem>
+                      )}
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
               
               {/* Additional AdSense after posts */}
               {filteredPosts.length > 3 && (
@@ -133,7 +199,10 @@ const CategoryPage = () => {
                 Try selecting a different category to find more articles.
               </p>
               <Button 
-                onClick={() => setSelectedCategory("all")}
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setCurrentPage(1);
+                }}
               >
                 Show All Articles
               </Button>

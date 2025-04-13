@@ -191,3 +191,13 @@ export const resources = [
     link: "#"
   }
 ];
+
+// Export the combined posts as blogPosts for admin management
+export const blogPosts = [
+  ...featuredPosts,
+  ...latestPosts,
+].map(post => ({
+  ...post,
+  id: post.slug, // Use the slug as the ID since it's unique
+  content: `<p>This is sample content for the blog post titled "${post.title}".</p><p>In a real application, this would contain the full article content.</p>`,
+}));

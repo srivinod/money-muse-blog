@@ -1,3 +1,4 @@
+
 import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark, Calendar, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import BlogPostCard from "@/components/BlogPostCard";
@@ -50,10 +51,10 @@ const HomePage = () => {
             </p>
           </div>
           
-          {/* Featured Layout - Grid with spotlight */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Featured Post - Takes up 2 columns */}
-            <div className="lg:col-span-3">
+          {/* Featured Layout - Main featured post */}
+          <div className="grid grid-cols-1 gap-6 mb-10">
+            {/* Main Featured Post */}
+            <div>
               <Card className="overflow-hidden h-full shadow-md hover:shadow-lg transition-all duration-300">
                 <div className="relative">
                   <img
@@ -91,8 +92,24 @@ const HomePage = () => {
               </Card>
             </div>
           </div>
+          
+          {/* Additional Featured Posts in smaller cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {featuredPosts.slice(1, 4).map((post, index) => (
+              <BlogPostCard 
+                key={index}
+                title={post.title}
+                excerpt={post.excerpt}
+                category={post.category}
+                date={post.date}
+                author={post.author}
+                imageUrl={post.imageUrl}
+                slug={post.slug}
+              />
+            ))}
+          </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Link to="/category/all" className="btn-outline">
               View All Articles
             </Link>

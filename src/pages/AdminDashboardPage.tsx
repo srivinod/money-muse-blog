@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mailbox, Users, RefreshCw } from "lucide-react";
+import { Mailbox, Users, RefreshCw, AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -19,6 +19,7 @@ const AdminDashboardPage = () => {
   const [newsletterSubscriptions, setNewsletterSubscriptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
@@ -30,17 +31,19 @@ const AdminDashboardPage = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
+    setError(null);
+    
     try {
       console.log("Fetching contact submissions...");
-      // Fetch contact submissions
+      // Fetch contact submissions with detailed logging
       const { data: contactData, error: contactError } = await supabase
         .from('contact_submissions')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
+        .order('created_at', { ascending: false });
 
       if (contactError) {
         console.error("Error fetching contact submissions:", contactError);
+        setError(`Failed to fetch contact submissions: ${contactError.message}`);
         throw contactError;
       }
       
@@ -52,21 +55,26 @@ const AdminDashboardPage = () => {
       const { data: newsletterData, error: newsletterError } = await supabase
         .from('newsletter_subscriptions')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
+        .order('created_at', { ascending: false });
 
       if (newsletterError) {
         console.error("Error fetching newsletter subscriptions:", newsletterError);
+        setError(`Failed to fetch newsletter subscriptions: ${newsletterError.message}`);
         throw newsletterError;
       }
       
       console.log("Newsletter subscriptions retrieved:", newsletterData);
       setNewsletterSubscriptions(newsletterData || []);
-    } catch (error) {
+      
+      toast({
+        title: "Data refreshed",
+        description: `Retrieved ${contactData?.length || 0} contact submissions and ${newsletterData?.length || 0} newsletter subscriptions.`,
+      });
+    } catch (error: any) {
       console.error("Error fetching data:", error);
       toast({
         title: "Error",
-        description: "Failed to load dashboard data. Please try again.",
+        description: `Failed to load dashboard data: ${error.message}`,
         variant: "destructive"
       });
     } finally {
@@ -86,7 +94,7 @@ const AdminDashboardPage = () => {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), 'MMM d, yyyy');
+      return format(new Date(dateString), 'MMM d, yyyy h:mm a');
     } catch (error) {
       console.error("Error formatting date:", dateString, error);
       return "Invalid date";
@@ -141,15 +149,43 @@ const AdminDashboardPage = () => {
             </Button>
           </div>
           
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-red-800">Error loading data</h4>
+                <p className="text-red-700 text-sm">{error}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2 text-red-700 border-red-300 hover:bg-red-50"
+                  onClick={handleRefresh}
+                >
+                  Try again
+                </Button>
+              </div>
+            </div>
+          )}
+          
           <Tabs defaultValue="contact">
             <TabsList className="mb-6">
               <TabsTrigger value="contact" className="flex items-center gap-2">
                 <Mailbox className="h-4 w-4" />
                 Contact Submissions
+                {contactSubmissions.length > 0 && (
+                  <span className="bg-primary/10 text-primary text-xs rounded-full px-2 py-0.5 ml-1">
+                    {contactSubmissions.length}
+                  </span>
+                )}
               </TabsTrigger>
               <TabsTrigger value="newsletter" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 Newsletter Subscribers
+                {newsletterSubscriptions.length > 0 && (
+                  <span className="bg-primary/10 text-primary text-xs rounded-full px-2 py-0.5 ml-1">
+                    {newsletterSubscriptions.length}
+                  </span>
+                )}
               </TabsTrigger>
             </TabsList>
             
@@ -178,8 +214,8 @@ const AdminDashboardPage = () => {
                                 <TooltipTrigger asChild>
                                   <span className="cursor-help">{submission.message}</span>
                                 </TooltipTrigger>
-                                <TooltipContent className="max-w-sm">
-                                  <p>{submission.message}</p>
+                                <TooltipContent className="max-w-sm p-4 bg-white">
+                                  <p className="whitespace-normal">{submission.message}</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -189,14 +225,20 @@ const AdminDashboardPage = () => {
                       ))}
                     </TableBody>
                   </Table>
-                  <div className="mt-4 text-right">
-                    <Button variant="outline" size="sm">
-                      View All Submissions
-                    </Button>
-                  </div>
+                  {contactSubmissions.length > 5 && (
+                    <div className="mt-4 text-right">
+                      <Button variant="outline" size="sm">
+                        View All ({contactSubmissions.length}) Submissions
+                      </Button>
+                    </div>
+                  )}
                 </>
               ) : (
-                <p className="text-center py-4 text-gray-500">No contact submissions yet.</p>
+                <div className="text-center py-12 bg-gray-50 rounded-md">
+                  <Mailbox className="h-12 w-12 mx-auto text-gray-400 mb-3" />
+                  <p className="text-gray-500 mb-1">No contact submissions yet.</p>
+                  <p className="text-gray-400 text-sm">When users submit the contact form, their messages will appear here.</p>
+                </div>
               )}
             </TabsContent>
             
@@ -221,14 +263,20 @@ const AdminDashboardPage = () => {
                       ))}
                     </TableBody>
                   </Table>
-                  <div className="mt-4 text-right">
-                    <Button variant="outline" size="sm">
-                      View All Subscribers
-                    </Button>
-                  </div>
+                  {newsletterSubscriptions.length > 5 && (
+                    <div className="mt-4 text-right">
+                      <Button variant="outline" size="sm">
+                        View All ({newsletterSubscriptions.length}) Subscribers
+                      </Button>
+                    </div>
+                  )}
                 </>
               ) : (
-                <p className="text-center py-4 text-gray-500">No newsletter subscriptions yet.</p>
+                <div className="text-center py-12 bg-gray-50 rounded-md">
+                  <Users className="h-12 w-12 mx-auto text-gray-400 mb-3" />
+                  <p className="text-gray-500 mb-1">No newsletter subscriptions yet.</p>
+                  <p className="text-gray-400 text-sm">When users subscribe to your newsletter, they will appear here.</p>
+                </div>
               )}
             </TabsContent>
           </Tabs>

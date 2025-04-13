@@ -51,10 +51,10 @@ const HomePage = () => {
             </p>
           </div>
           
-          {/* Featured Layout - Main featured post */}
-          <div className="grid grid-cols-1 gap-6 mb-10">
-            {/* Main Featured Post */}
-            <div>
+          {/* Featured Layout - Main featured post with one card beside it */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-10">
+            {/* Main Featured Post - takes 8 columns on md screens */}
+            <div className="md:col-span-8">
               <Card className="overflow-hidden h-full shadow-md hover:shadow-lg transition-all duration-300">
                 <div className="relative">
                   <img
@@ -91,11 +91,25 @@ const HomePage = () => {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Second Featured Post - takes 4 columns on md screens */}
+            <div className="md:col-span-4">
+              <BlogPostCard 
+                title={featuredPosts[1].title}
+                excerpt={featuredPosts[1].excerpt}
+                category={featuredPosts[1].category}
+                date={featuredPosts[1].date}
+                author={featuredPosts[1].author}
+                imageUrl={featuredPosts[1].imageUrl}
+                slug={featuredPosts[1].slug}
+                featured={true}
+              />
+            </div>
           </div>
           
           {/* Additional Featured Posts in smaller cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {featuredPosts.slice(1, 4).map((post, index) => (
+            {featuredPosts.slice(2, 5).map((post, index) => (
               <BlogPostCard 
                 key={index}
                 title={post.title}

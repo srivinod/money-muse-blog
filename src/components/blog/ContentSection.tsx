@@ -1,6 +1,7 @@
 
 import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/RichTextEditor";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ContentSectionProps {
   content: string;
@@ -9,10 +10,18 @@ interface ContentSectionProps {
 
 const ContentSection = ({ content, setContent }: ContentSectionProps) => {
   return (
-    <div className="space-y-2 mb-6">
-      <Label htmlFor="content">Post Content</Label>
-      <RichTextEditor value={content} onChange={setContent} />
-    </div>
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle>Post Content</CardTitle>
+        <CardDescription>Write your blog post content here using the rich text editor</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <Label htmlFor="content">Post Content</Label>
+          <RichTextEditor value={content} onChange={setContent} />
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

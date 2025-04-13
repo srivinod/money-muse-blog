@@ -34,10 +34,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* First AdSense placement - after hero section */}
-      <div className="container-custom">
-        <AdSense slot="3456789012" format="horizontal" />
-      </div>
+      {/* Removed First AdSense block */}
 
       {/* Featured Posts Section */}
       <section className="py-16 bg-gray-50">

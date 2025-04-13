@@ -61,26 +61,7 @@ const Header = () => {
               Contact
             </Link>
             
-            {/* Additional links to footer pages */}
-            <div className="relative group">
-              <button className="text-gray-700 hover:text-primary font-medium transition-colors flex items-center">
-                More
-                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-10 hidden group-hover:block">
-                <Link to="/privacy" className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white">
-                  Privacy Policy
-                </Link>
-                <Link to="/terms" className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white">
-                  Terms of Service
-                </Link>
-                <Link to="/disclaimer" className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white">
-                  Disclaimer
-                </Link>
-              </div>
-            </div>
+            {/* Removed the "More" dropdown section */}
           </nav>
 
           {/* Auth buttons */}
@@ -190,37 +171,8 @@ const Header = () => {
               >
                 Contact
               </Link>
-              <div className="dropdown">
-                <button className="text-gray-700 hover:text-primary font-medium transition-colors flex items-center">
-                  More
-                  <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="flex flex-col pl-4 mt-2 space-y-2">
-                  <Link 
-                    to="/privacy" 
-                    className="text-gray-600 hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Privacy Policy
-                  </Link>
-                  <Link 
-                    to="/terms" 
-                    className="text-gray-600 hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Terms of Service
-                  </Link>
-                  <Link 
-                    to="/disclaimer" 
-                    className="text-gray-600 hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Disclaimer
-                  </Link>
-                </div>
-              </div>
+              
+              {/* Removed the "More" dropdown section from mobile menu as well */}
               
               {/* Auth buttons for mobile */}
               {isAuthenticated ? (

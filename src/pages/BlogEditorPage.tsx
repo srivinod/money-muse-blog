@@ -41,19 +41,28 @@ const BlogEditorPage = () => {
     enabled: isEditMode,
     gcTime: 0,
     staleTime: 0,
-    meta: {},
-    retry: 1,
-    onSuccess: (data: BlogPost | null) => {
-      if (data) {
-        setTitle(data.title);
-        setSlug(data.slug);
-        setCategory(data.category);
-        setExcerpt(data.excerpt);
-        setContent(data.content || "");
-        setImageUrl(data.imageUrl);
-        setAuthor(data.author);
-        setDate(data.date);
-      } else {
+    meta: {
+      onSuccess: (data: BlogPost | null) => {
+        if (data) {
+          setTitle(data.title);
+          setSlug(data.slug);
+          setCategory(data.category);
+          setExcerpt(data.excerpt);
+          setContent(data.content || "");
+          setImageUrl(data.imageUrl);
+          setAuthor(data.author);
+          setDate(data.date);
+        } else {
+          toast({
+            title: "Post not found",
+            description: "The blog post you're trying to edit doesn't exist",
+            variant: "destructive",
+          });
+          navigate("/admin/posts");
+        }
+      },
+      onError: (error: any) => {
+        console.error("Error fetching post:", error);
         toast({
           title: "Post not found",
           description: "The blog post you're trying to edit doesn't exist",
@@ -62,15 +71,7 @@ const BlogEditorPage = () => {
         navigate("/admin/posts");
       }
     },
-    onError: (error: any) => {
-      console.error("Error fetching post:", error);
-      toast({
-        title: "Post not found",
-        description: "The blog post you're trying to edit doesn't exist",
-        variant: "destructive",
-      });
-      navigate("/admin/posts");
-    }
+    retry: 1,
   });
 
   // Create post mutation

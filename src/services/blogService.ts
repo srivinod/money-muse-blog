@@ -26,6 +26,17 @@ export type BlogCategory = {
   icon: string;
 };
 
+// Helper function to transform database record to BlogPost
+const transformDbPostToBlogPost = (data: any): BlogPost => {
+  return {
+    ...data,
+    imageUrl: data.imageurl, // Fix the casing difference between DB and client
+    featured: Boolean(data.featured), // Ensure featured is a boolean
+    metaTitle: data.meta_title || data.title, // Use DB meta_title or fallback to title
+    metaDescription: data.meta_description || data.excerpt // Use DB meta_description or fallback to excerpt
+  };
+};
+
 // Fetch all blog posts
 export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
@@ -38,13 +49,7 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
     throw error;
   }
 
-  return data.map(post => ({
-    ...post,
-    imageUrl: post.imageurl, // Fix the casing difference between DB and client
-    featured: Boolean(post.featured), // Ensure featured is a boolean
-    metaTitle: post.meta_title || post.title, // Use DB meta_title or fallback to title
-    metaDescription: post.meta_description || post.excerpt // Use DB meta_description or fallback to excerpt
-  }));
+  return data.map(transformDbPostToBlogPost);
 };
 
 // Fetch featured blog posts
@@ -61,13 +66,7 @@ export const fetchFeaturedPosts = async (): Promise<BlogPost[]> => {
     throw error;
   }
 
-  return data.map(post => ({
-    ...post,
-    imageUrl: post.imageurl,
-    featured: true,
-    metaTitle: post.meta_title || post.title,
-    metaDescription: post.meta_description || post.excerpt
-  }));
+  return data.map(transformDbPostToBlogPost);
 };
 
 // Fetch latest blog posts
@@ -83,13 +82,7 @@ export const fetchLatestPosts = async (): Promise<BlogPost[]> => {
     throw error;
   }
 
-  return data.map(post => ({
-    ...post,
-    imageUrl: post.imageurl,
-    featured: Boolean(post.featured),
-    metaTitle: post.meta_title || post.title,
-    metaDescription: post.meta_description || post.excerpt
-  }));
+  return data.map(transformDbPostToBlogPost);
 };
 
 // Fetch a single blog post by slug
@@ -114,13 +107,7 @@ export const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null
 
   console.log(`Successfully fetched blog post: ${data.title}`);
   
-  return {
-    ...data,
-    imageUrl: data.imageurl,
-    featured: Boolean(data.featured),
-    metaTitle: data.meta_title || data.title,
-    metaDescription: data.meta_description || data.excerpt
-  };
+  return transformDbPostToBlogPost(data);
 };
 
 // Fetch a single blog post by ID
@@ -140,13 +127,7 @@ export const fetchBlogPostById = async (id: string): Promise<BlogPost | null> =>
     throw error;
   }
 
-  return {
-    ...data,
-    imageUrl: data.imageurl,
-    featured: Boolean(data.featured),
-    metaTitle: data.meta_title || data.title,
-    metaDescription: data.meta_description || data.excerpt
-  };
+  return transformDbPostToBlogPost(data);
 };
 
 // Fetch blog posts by category
@@ -174,13 +155,7 @@ export const fetchBlogPostsByCategory = async (categorySlug: string): Promise<Bl
     throw error;
   }
 
-  return data.map(post => ({
-    ...post,
-    imageUrl: post.imageurl,
-    featured: Boolean(post.featured),
-    metaTitle: post.meta_title || post.title,
-    metaDescription: post.meta_description || post.excerpt
-  }));
+  return data.map(transformDbPostToBlogPost);
 };
 
 // Fetch related blog posts (same category, excluding current post)
@@ -198,13 +173,7 @@ export const fetchRelatedPosts = async (slug: string, category: string): Promise
     throw error;
   }
 
-  return data.map(post => ({
-    ...post,
-    imageUrl: post.imageurl,
-    featured: Boolean(post.featured),
-    metaTitle: post.meta_title || post.title,
-    metaDescription: post.meta_description || post.excerpt
-  }));
+  return data.map(transformDbPostToBlogPost);
 };
 
 // Create a new blog post
@@ -235,13 +204,7 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
     throw error;
   }
 
-  return {
-    ...data,
-    imageUrl: data.imageurl,
-    featured: Boolean(data.featured),
-    metaTitle: data.meta_title || data.title,
-    metaDescription: data.meta_description || data.excerpt
-  };
+  return transformDbPostToBlogPost(data);
 };
 
 // Update an existing blog post
@@ -278,13 +241,7 @@ export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promi
     throw error;
   }
 
-  return {
-    ...data,
-    imageUrl: data.imageurl,
-    featured: Boolean(data.featured),
-    metaTitle: data.meta_title || data.title,
-    metaDescription: data.meta_description || data.excerpt
-  };
+  return transformDbPostToBlogPost(data);
 };
 
 // Delete a blog post

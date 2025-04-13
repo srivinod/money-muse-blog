@@ -1,8 +1,10 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import BlogPostCard from "@/components/BlogPostCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import AdSense from "@/components/AdSense";
 import { categories, latestPosts, featuredPosts } from "@/data/blogData";
 import { Button } from "@/components/ui/button";
 
@@ -53,6 +55,11 @@ const CategoryPage = () => {
     <div>
       <PageHeader title={title} description={description} />
 
+      {/* First AdSense placement - after page header */}
+      <div className="container-custom">
+        <AdSense slot="1234567890" format="horizontal" />
+      </div>
+
       <section className="py-8">
         <div className="container-custom">
           {/* Show category filter buttons only on All Articles page */}
@@ -89,20 +96,37 @@ const CategoryPage = () => {
           </div>
 
           {filteredPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post, index) => (
-                <BlogPostCard
-                  key={index}
-                  title={post.title}
-                  excerpt={post.excerpt}
-                  category={post.category}
-                  date={post.date}
-                  author={post.author}
-                  imageUrl={post.imageUrl}
-                  slug={post.slug}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPosts.map((post, index) => (
+                  <>
+                    <BlogPostCard
+                      key={index}
+                      title={post.title}
+                      excerpt={post.excerpt}
+                      category={post.category}
+                      date={post.date}
+                      author={post.author}
+                      imageUrl={post.imageUrl}
+                      slug={post.slug}
+                    />
+                    {/* Insert AdSense after every 3 posts */}
+                    {(index + 1) % 3 === 0 && index < filteredPosts.length - 1 && (
+                      <div className="col-span-full my-6">
+                        <AdSense slot="4567890123" format="horizontal" />
+                      </div>
+                    )}
+                  </>
+                ))}
+              </div>
+              
+              {/* Additional AdSense after posts */}
+              {filteredPosts.length > 3 && (
+                <div className="my-12">
+                  <AdSense slot="8901234567" format="rectangle" />
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-16 bg-gray-50 rounded-lg">
               <h3 className="text-2xl font-bold mb-4">No articles found</h3>
@@ -118,6 +142,11 @@ const CategoryPage = () => {
           )}
         </div>
       </section>
+
+      {/* AdSense before Newsletter */}
+      <div className="container-custom mb-8">
+        <AdSense slot="6789012345" format="horizontal" />
+      </div>
 
       <NewsletterSignup />
 
@@ -153,6 +182,11 @@ const CategoryPage = () => {
                   </div>
                 </div>
               ))}
+          </div>
+          
+          {/* Final AdSense at bottom of the page */}
+          <div className="mt-12">
+            <AdSense slot="9012345678" format="horizontal" />
           </div>
         </div>
       </section>

@@ -5,6 +5,7 @@ import { Calendar, User, ArrowLeft } from "lucide-react";
 import { featuredPosts, latestPosts } from "@/data/blogData";
 import PageHeader from "@/components/PageHeader";
 import BlogPostCard from "@/components/BlogPostCard";
+import AdSense from "@/components/AdSense";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -61,6 +62,11 @@ const BlogDetailPage = () => {
         description="Practical financial advice and insights to improve your finances"
       />
       
+      {/* First AdSense placement - after page header */}
+      <div className="container-custom">
+        <AdSense slot="2345678901" format="horizontal" />
+      </div>
+      
       {/* Main blog content */}
       <section className="py-8 md:py-12">
         <div className="container-custom">
@@ -109,6 +115,11 @@ const BlogDetailPage = () => {
                     Financial literacy is a cornerstone of a stable and secure future. Understanding how to manage your money effectively can make the difference between living paycheck to paycheck and building long-term wealth.
                   </p>
                   
+                  {/* AdSense placement within content */}
+                  <div className="my-8">
+                    <AdSense slot="3456789012" format="rectangle" />
+                  </div>
+                  
                   <h2 className="text-2xl font-bold mt-8 mb-4">Why This Matters</h2>
                   <p className="mb-4">
                     In today's complex financial landscape, making informed decisions about your money is more important than ever. Whether you're saving for retirement, planning a major purchase, or simply trying to make ends meet, having a solid grasp of financial principles can help you achieve your goals.
@@ -123,6 +134,11 @@ const BlogDetailPage = () => {
                     <li className="mb-2">Regularly review and adjust your financial strategies</li>
                   </ul>
                   
+                  {/* Second AdSense placement within content */}
+                  <div className="my-8">
+                    <AdSense slot="4567890123" format="horizontal" />
+                  </div>
+                  
                   <p className="mb-4">
                     Remember that financial wellness is a journey, not a destination. By taking small, consistent steps toward your goals, you can create a more secure and prosperous future for yourself and your loved ones.
                   </p>
@@ -132,6 +148,11 @@ const BlogDetailPage = () => {
           </div>
         </div>
       </section>
+      
+      {/* AdSense before related posts */}
+      <div className="container-custom mb-8">
+        <AdSense slot="5678901234" format="horizontal" />
+      </div>
       
       {/* Related posts section */}
       {relatedPosts.length > 0 && (
@@ -151,6 +172,11 @@ const BlogDetailPage = () => {
                   slug={related.slug}
                 />
               ))}
+            </div>
+            
+            {/* Final AdSense at bottom of related posts */}
+            <div className="mt-12">
+              <AdSense slot="6789012345" format="horizontal" />
             </div>
           </div>
         </section>

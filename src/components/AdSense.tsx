@@ -19,10 +19,10 @@ const AdSense: React.FC<AdSenseProps> = ({
       <div 
         className="bg-gray-100 border border-gray-200 rounded-md flex items-center justify-center text-gray-500 text-sm"
         style={{ 
-          minHeight: '300px', // Increased from 250px to 300px
+          minHeight: '330px', // Increased by 10% from 300px to 330px
           width: '100%',
           overflow: 'hidden',
-          transform: 'translateY(-1px)' // Moved up by 1px
+          transform: 'translateY(-1px)' 
         }}
       >
         <div className="text-center p-4">

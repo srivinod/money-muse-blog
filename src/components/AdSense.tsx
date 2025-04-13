@@ -16,13 +16,13 @@ const AdSense: React.FC<AdSenseProps> = ({
 }) => {
   return (
     <div className={`ad-container my-6 ${className || ''}`}>
-      {/* This is a dummy AdSense ad that mimics the structure of a real one */}
       <div 
         className="bg-gray-100 border border-gray-200 rounded-md flex items-center justify-center text-gray-500 text-sm"
         style={{ 
-          minHeight: '250px',
+          minHeight: '300px', // Increased from 250px to 300px
           width: '100%',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          transform: 'translateY(-1px)' // Moved up by 1px
         }}
       >
         <div className="text-center p-4">

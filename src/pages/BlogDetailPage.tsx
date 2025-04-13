@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -68,6 +67,8 @@ const BlogDetailPage = () => {
         />
         
         <CardContent className="p-8">
+          <h1 className="text-3xl font-bold mb-6">{post.title}</h1>
+          
           <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-500">
             <Link 
               to={`/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`}

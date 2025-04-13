@@ -5,6 +5,13 @@ import BlogPostCard from "@/components/BlogPostCard";
 import CategoryCard from "@/components/CategoryCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { categories, featuredPosts, latestPosts } from "@/data/blogData";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from "@/components/ui/carousel";
 
 const HomePage = () => {
   return (
@@ -63,20 +70,50 @@ const HomePage = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredPosts.map((post, index) => (
-              <BlogPostCard 
-                key={index}
-                title={post.title}
-                excerpt={post.excerpt}
-                category={post.category}
-                date={post.date}
-                author={post.author}
-                imageUrl={post.imageUrl}
-                slug={post.slug}
-                featured={index === 0}
-              />
-            ))}
+          {/* First row - large featured post */}
+          <div className="mb-10">
+            <BlogPostCard 
+              key="featured-main"
+              title={featuredPosts[0].title}
+              excerpt={featuredPosts[0].excerpt}
+              category={featuredPosts[0].category}
+              date={featuredPosts[0].date}
+              author={featuredPosts[0].author}
+              imageUrl={featuredPosts[0].imageUrl}
+              slug={featuredPosts[0].slug}
+              featured={true}
+            />
+          </div>
+
+          {/* Second row - carousel for other featured posts */}
+          <div className="mt-12">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {featuredPosts.slice(1).map((post, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <BlogPostCard 
+                      title={post.title}
+                      excerpt={post.excerpt}
+                      category={post.category}
+                      date={post.date}
+                      author={post.author}
+                      imageUrl={post.imageUrl}
+                      slug={post.slug}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center mt-6">
+                <CarouselPrevious className="relative static left-0 translate-y-0 mr-2" />
+                <CarouselNext className="relative static right-0 translate-y-0 ml-2" />
+              </div>
+            </Carousel>
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/category/all" className="btn-outline">
+              View All Articles
+            </Link>
           </div>
         </div>
       </section>

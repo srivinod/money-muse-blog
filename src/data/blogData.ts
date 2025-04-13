@@ -1,4 +1,3 @@
-
 import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark } from "lucide-react";
 import React from "react";
 
@@ -67,6 +66,33 @@ export const featuredPosts = [
     date: "April 2, 2023",
     author: "David Wong",
     imageUrl: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "The Ultimate Guide to Financial Independence",
+    slug: "guide-to-financial-independence",
+    excerpt: "Learn how to achieve financial independence with practical strategies that you can implement right away, regardless of your current income level.",
+    category: "Financial Planning",
+    date: "April 15, 2023",
+    author: "Emily Rodriguez",
+    imageUrl: "https://images.unsplash.com/photo-1606189934846-a527add8a77b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Minimalist Living: Save Money by Owning Less",
+    slug: "minimalist-living-save-money",
+    excerpt: "Discover how embracing minimalism can lead to significant financial benefits and a more intentional, fulfilling lifestyle.",
+    category: "Frugal Living",
+    date: "April 5, 2023",
+    author: "Jessica Chen",
+    imageUrl: "https://images.unsplash.com/photo-1517705008128-361805f42e86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "How to Talk to Your Children About Money",
+    slug: "talking-to-children-about-money",
+    excerpt: "Teaching financial literacy to your kids is one of the most valuable gifts you can give them. Here's how to make money conversations engaging and educational.",
+    category: "Financial Planning",
+    date: "March 30, 2023",
+    author: "Emily Rodriguez",
+    imageUrl: "https://images.unsplash.com/photo-1531956531700-dc0ee0f1f9a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   }
 ];
 

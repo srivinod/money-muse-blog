@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
@@ -64,9 +63,9 @@ const CategoryPage = () => {
         <div className="container-custom">
           {/* Show category filter buttons only on All Articles page */}
           {isAllCategory && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4">Filter by Category</h2>
-              <div className="flex flex-wrap gap-2">
+            <div className="mb-8 flex flex-col items-center"> {/* Added flex and center alignment */}
+              <h2 className="text-2xl font-semibold mb-4 text-center">Filter by Category</h2>
+              <div className="flex flex-wrap gap-2 justify-center"> {/* Added justify-center */}
                 <Button
                   variant={selectedCategory === "all" ? "default" : "outline"}
                   onClick={() => setSelectedCategory("all")}

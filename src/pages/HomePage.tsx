@@ -1,4 +1,3 @@
-
 import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark, Calendar, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import BlogPostCard from "@/components/BlogPostCard";
@@ -19,23 +18,20 @@ const HomePage = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary to-secondary py-20 md:py-32">
+      <section className="relative bg-white py-20 md:py-32 text-center">
         <div className="absolute inset-0 bg-grid-white/10 bg-[length:20px_20px] z-0"></div>
         <div className="container-custom relative z-10">
-          <div className="max-w-3xl text-white">
+          <div className="max-w-3xl mx-auto text-center text-gray-900">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
               Master Your Money, <br />
               One Step at a Time
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
+            <p className="text-xl md:text-2xl mb-8 text-gray-700">
               Practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/category/saving" className="bg-white text-primary hover:bg-gray-100 font-semibold px-6 py-3 rounded-md transition-colors duration-300">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/category/saving" className="bg-primary text-white hover:bg-primary/90 font-semibold px-6 py-3 rounded-md transition-colors duration-300">
                 Start Saving
-              </Link>
-              <Link to="/about" className="bg-transparent hover:bg-white/10 text-white border border-white font-semibold px-6 py-3 rounded-md transition-colors duration-300">
-                About Us
               </Link>
             </div>
           </div>

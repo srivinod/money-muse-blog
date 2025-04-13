@@ -19,6 +19,8 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import BlogManagementPage from "./pages/BlogManagementPage";
 import BlogEditorPage from "./pages/BlogEditorPage";
 import CategoriesManagementPage from "./pages/CategoriesManagementPage";
+import SubscribersPage from "./pages/SubscribersPage";
+import ContactsPage from "./pages/ContactsPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -83,6 +85,22 @@ const App = () => (
                 element={
                   <ProtectedRoute requireAdmin>
                     <BlogEditorPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/subscribers" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <SubscribersPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/contacts" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <ContactsPage />
                   </ProtectedRoute>
                 } 
               />

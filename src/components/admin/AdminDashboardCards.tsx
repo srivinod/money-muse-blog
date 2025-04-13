@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Mail, MessageSquare } from "lucide-react";
 
 const AdminDashboardCards = () => {
   return (
@@ -43,6 +44,52 @@ const AdminDashboardCards = () => {
               </TooltipTrigger>
               <TooltipContent>
                 <p>Add, edit, or delete categories</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mail className="h-5 w-5" /> Newsletter Subscribers
+          </CardTitle>
+          <CardDescription>View all newsletter subscribers</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link to="/admin/subscribers">
+                  <Button variant="outline">View Subscribers</Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>View all newsletter subscribers</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" /> Contact Forms
+          </CardTitle>
+          <CardDescription>Review contact form submissions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link to="/admin/contacts">
+                  <Button variant="outline">View Submissions</Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Review contact form submissions</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +10,7 @@ const ContactPage = () => {
     email: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -19,23 +20,46 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // In a real app, this would send the data to your backend
-    console.log("Form submitted:", formData);
-    
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-    
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      message: "",
-    });
+    try {
+      // Insert data into Supabase
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message
+          }
+        ]);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you as soon as possible.",
+      });
+      
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission Error",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -134,6 +158,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
                   
@@ -149,6 +174,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
                   
@@ -164,14 +190,16 @@ const ContactPage = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       required
+                      disabled={isSubmitting}
                     ></textarea>
                   </div>
                   
                   <button
                     type="submit"
                     className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-md transition-colors duration-300 flex items-center justify-center"
+                    disabled={isSubmitting}
                   >
-                    Send Message
+                    {isSubmitting ? "Sending..." : "Send Message"}
                     <Send className="ml-2 h-5 w-5" />
                   </button>
                 </form>

@@ -2,20 +2,50 @@
 import { useState } from "react";
 import { Mail } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const NewsletterSignup = () => {
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // This would connect to your newsletter service in a real app
-    toast({
-      title: "Success!",
-      description: "You've been subscribed to our newsletter.",
-    });
-    
-    setEmail("");
+    try {
+      // Insert data into Supabase
+      const { error } = await supabase
+        .from('newsletter_subscriptions')
+        .insert([{ email }]);
+      
+      if (error) {
+        // If it's a uniqueness violation (email already exists)
+        if (error.code === '23505') {
+          toast({
+            title: "Already Subscribed",
+            description: "This email is already subscribed to our newsletter.",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Success!",
+          description: "You've been subscribed to our newsletter.",
+        });
+      }
+      
+      setEmail("");
+    } catch (error) {
+      console.error("Error subscribing to newsletter:", error);
+      toast({
+        title: "Subscription Error",
+        description: "There was a problem subscribing you. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,12 +67,14 @@ const NewsletterSignup = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isSubmitting}
             />
             <button
               type="submit"
-              className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-md transition-colors duration-300 whitespace-nowrap"
+              className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-md transition-colors duration-300 whitespace-nowrap disabled:opacity-70"
+              disabled={isSubmitting}
             >
-              Subscribe
+              {isSubmitting ? "Subscribing..." : "Subscribe"}
             </button>
           </form>
           <p className="text-sm text-gray-600 mt-4">

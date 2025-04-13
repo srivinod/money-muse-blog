@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Mail, MessageSquare } from "lucide-react";
+import { Mail, MessageSquare, FileText, ClipboardList } from "lucide-react";
 
 const AdminDashboardCards = () => {
   return (

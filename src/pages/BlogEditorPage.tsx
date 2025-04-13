@@ -67,8 +67,8 @@ const BlogEditorPage = () => {
     const newTitle = e.target.value;
     setTitle(newTitle);
     
-    // Auto-generate slug from title if in create mode
-    if (!isEditMode) {
+    // Auto-generate slug from title if in create mode and slug is empty
+    if (!isEditMode && !slug) {
       setSlug(newTitle.toLowerCase().replace(/[^\w\s]/gi, "").replace(/\s+/g, "-"));
     }
   };
@@ -155,12 +155,9 @@ const BlogEditorPage = () => {
                   onChange={(e) => setSlug(e.target.value)}
                   placeholder="Enter post slug"
                   required
-                  disabled={isEditMode}
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  {isEditMode 
-                    ? "Slug cannot be changed after creation"
-                    : "The slug is used in the URL of your post"}
+                  The slug is used in the URL of your post
                 </p>
               </div>
               

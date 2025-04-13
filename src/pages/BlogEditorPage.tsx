@@ -11,7 +11,7 @@ import PageHeader from "@/components/PageHeader";
 import RichTextEditor from "@/components/RichTextEditor";
 import { categories } from "@/data/blogData";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchBlogPostBySlug, createBlogPost, updateBlogPost, BlogPost } from "@/services/blogService";
+import { fetchBlogPostById, createBlogPost, updateBlogPost, BlogPost } from "@/services/blogService";
 
 const BlogEditorPage = () => {
   const { isAuthenticated, isAdmin } = useAuth();
@@ -37,7 +37,7 @@ const BlogEditorPage = () => {
   // Fetch post data if in edit mode
   const { isLoading: isPostLoading } = useQuery({
     queryKey: ['blog-post', id],
-    queryFn: () => fetchBlogPostBySlug(id as string),
+    queryFn: () => fetchBlogPostById(id as string),
     enabled: isEditMode,
     gcTime: 0,
     staleTime: 0,

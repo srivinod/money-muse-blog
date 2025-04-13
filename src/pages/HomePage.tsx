@@ -1,5 +1,4 @@
-
-import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark } from "lucide-react";
+import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark, Calendar, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import BlogPostCard from "@/components/BlogPostCard";
 import CategoryCard from "@/components/CategoryCard";

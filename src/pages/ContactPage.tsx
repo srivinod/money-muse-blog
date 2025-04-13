@@ -1,41 +1,85 @@
 
 import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Send, Shield } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import ReCAPTCHA from "react-google-recaptcha";
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+// Form validation schema
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  message: z.string().min(10, {
+    message: "Message must be at least 10 characters.",
+  }),
+});
 
 const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState(false);
+  
+  // Initialize form with react-hook-form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value);
+    if (value) {
+      setCaptchaError(false);
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // Verify captcha
+    if (!captchaValue) {
+      setCaptchaError(true);
+      toast({
+        title: "Please complete the captcha",
+        description: "Verify that you are not a robot before submitting the form.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      console.log("Submitting form data:", formData);
+      console.log("Submitting form data:", values);
       
       // Insert data into Supabase
       const { data, error } = await supabase
         .from('contact_submissions')
         .insert([
           {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message
+            name: values.name,
+            email: values.email,
+            message: values.message,
+            captcha_verified: true
           }
         ]);
       
@@ -52,11 +96,14 @@ const ContactPage = () => {
       });
       
       // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        message: "",
-      });
+      form.reset();
+      setCaptchaValue(null);
+      // Reset reCAPTCHA
+      const recaptchaElement = document.querySelector('iframe[src*="recaptcha"]')?.parentElement;
+      if (recaptchaElement) {
+        // Force reCAPTCHA reset
+        (recaptchaElement as any)?.children[0]?.contentWindow?.grecaptcha?.reset();
+      }
 
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -153,64 +200,83 @@ const ContactPage = () => {
             <div>
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                      control={form.control}
                       name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                      required
-                      disabled={isSubmitting}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="John Doe" {...field} disabled={isSubmitting} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
+                    
+                    <FormField
+                      control={form.control}
                       name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                      required
-                      disabled={isSubmitting}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email Address</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="john.doe@example.com" {...field} disabled={isSubmitting} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Message
-                    </label>
-                    <textarea
-                      id="message"
+                    
+                    <FormField
+                      control={form.control}
                       name="message"
-                      rows={5}
-                      value={formData.message}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                      required
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Message</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Tell us how we can help you..." 
+                              rows={5} 
+                              {...field} 
+                              disabled={isSubmitting} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center mb-1">
+                        <Shield className="h-4 w-4 mr-2 text-primary" />
+                        <span className="text-sm font-medium">Security Verification</span>
+                      </div>
+                      <div className="flex justify-center sm:justify-start">
+                        <ReCAPTCHA
+                          sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // This is Google's test key, replace with your own in production
+                          onChange={handleCaptchaChange}
+                        />
+                      </div>
+                      {captchaError && (
+                        <p className="text-sm font-medium text-destructive">
+                          Please complete the captcha verification
+                        </p>
+                      )}
+                    </div>
+                    
+                    <button
+                      type="submit"
+                      className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-md transition-colors duration-300 flex items-center justify-center"
                       disabled={isSubmitting}
-                    ></textarea>
-                  </div>
-                  
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-md transition-colors duration-300 flex items-center justify-center"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                    <Send className="ml-2 h-5 w-5" />
-                  </button>
-                </form>
+                    >
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                      <Send className="ml-2 h-5 w-5" />
+                    </button>
+                  </form>
+                </Form>
               </div>
             </div>
           </div>

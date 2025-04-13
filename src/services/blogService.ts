@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/data/blogData";
 
@@ -208,19 +209,20 @@ export const fetchRelatedPosts = async (slug: string, category: string): Promise
 
 // Create a new blog post
 export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPost> => {
-  // Convert imageUrl to imageurl for the database
+  // Convert client fields to match DB schema
   const dbPost = {
-    ...post,
-    imageurl: post.imageUrl,
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.content,
+    category: post.category,
+    author: post.author,
+    date: post.date,
+    imageurl: post.imageUrl, // Note: DB uses lowercase 'url'
     featured: post.featured || false,
-    meta_title: post.metaTitle || post.title,
-    meta_description: post.metaDescription || post.excerpt
+    meta_title: post.metaTitle, // Add meta_title field
+    meta_description: post.metaDescription // Add meta_description field
   };
-  
-  // Remove fields not matching DB schema
-  delete (dbPost as any).imageUrl;
-  delete (dbPost as any).metaTitle;
-  delete (dbPost as any).metaDescription;
 
   const { data, error } = await supabase
     .from("blog_posts")
@@ -244,23 +246,25 @@ export const createBlogPost = async (post: Omit<BlogPost, "id">): Promise<BlogPo
 
 // Update an existing blog post
 export const updateBlogPost = async (id: string, post: Partial<BlogPost>): Promise<BlogPost> => {
-  // Convert fields to match DB schema
-  const dbPost: any = { ...post };
+  // Initialize an empty object for DB fields
+  const dbPost: Record<string, any> = {};
   
-  if (post.imageUrl) {
-    dbPost.imageurl = post.imageUrl;
-    delete dbPost.imageUrl;
-  }
+  // Only include the fields that are being updated
+  if (post.slug !== undefined) dbPost.slug = post.slug;
+  if (post.title !== undefined) dbPost.title = post.title;
+  if (post.excerpt !== undefined) dbPost.excerpt = post.excerpt;
+  if (post.content !== undefined) dbPost.content = post.content;
+  if (post.category !== undefined) dbPost.category = post.category;
+  if (post.author !== undefined) dbPost.author = post.author;
+  if (post.date !== undefined) dbPost.date = post.date;
+  if (post.featured !== undefined) dbPost.featured = post.featured;
+  
+  // Map client field names to DB field names
+  if (post.imageUrl !== undefined) dbPost.imageurl = post.imageUrl;
+  if (post.metaTitle !== undefined) dbPost.meta_title = post.metaTitle;
+  if (post.metaDescription !== undefined) dbPost.meta_description = post.metaDescription;
 
-  if (post.metaTitle !== undefined) {
-    dbPost.meta_title = post.metaTitle;
-    delete dbPost.metaTitle;
-  }
-
-  if (post.metaDescription !== undefined) {
-    dbPost.meta_description = post.metaDescription;
-    delete dbPost.metaDescription;
-  }
+  console.log("Updating post with ID:", id, "Fields:", dbPost);
 
   const { data, error } = await supabase
     .from("blog_posts")

@@ -15,6 +15,12 @@ import DisclaimerPage from "./pages/DisclaimerPage";
 import CategoryPage from "./pages/CategoryPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import BlogManagementPage from "./pages/BlogManagementPage";
+import BlogEditorPage from "./pages/BlogEditorPage";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -24,20 +30,58 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="about" element={<AboutPage />} />
-            <Route path="contact" element={<ContactPage />} />
-            <Route path="resources" element={<ResourcesPage />} />
-            <Route path="privacy" element={<PrivacyPage />} />
-            <Route path="terms" element={<TermsPage />} />
-            <Route path="disclaimer" element={<DisclaimerPage />} />
-            <Route path="category/:categoryName" element={<CategoryPage />} />
-            <Route path="blog/:slug" element={<BlogDetailPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="contact" element={<ContactPage />} />
+              <Route path="resources" element={<ResourcesPage />} />
+              <Route path="privacy" element={<PrivacyPage />} />
+              <Route path="terms" element={<TermsPage />} />
+              <Route path="disclaimer" element={<DisclaimerPage />} />
+              <Route path="category/:categoryName" element={<CategoryPage />} />
+              <Route path="blog/:slug" element={<BlogDetailPage />} />
+              <Route path="login" element={<LoginPage />} />
+              
+              {/* Admin Routes */}
+              <Route 
+                path="admin/dashboard" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/posts" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <BlogManagementPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/posts/new" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <BlogEditorPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/posts/edit/:id" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <BlogEditorPage />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

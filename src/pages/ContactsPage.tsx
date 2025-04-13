@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,36 +17,57 @@ const ContactsPage = () => {
   const pageSize = 10;
 
   const fetchContacts = async ({ page = 1 }) => {
+    console.log("Fetching contacts for page:", page);
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    // First, get the total count
-    const { count } = await supabase
-      .from("contact_submissions")
-      .select("*", { count: "exact", head: true });
-    
-    // Then get the data for the current page
-    const { data, error } = await supabase
-      .from("contact_submissions")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    try {
+      // First, get the total count
+      const { count, error: countError } = await supabase
+        .from("contact_submissions")
+        .select("*", { count: "exact", head: true });
+      
+      if (countError) {
+        console.error("Error getting count:", countError);
+        throw new Error(countError.message);
+      }
+      
+      console.log("Total count:", count);
 
-    if (error) {
-      throw new Error(error.message);
+      // Then get the data for the current page
+      const { data, error } = await supabase
+        .from("contact_submissions")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) {
+        console.error("Error fetching data:", error);
+        throw new Error(error.message);
+      }
+
+      console.log("Fetched data:", data);
+
+      return {
+        contacts: data || [],
+        totalCount: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize)
+      };
+    } catch (error) {
+      console.error("Error in fetchContacts:", error);
+      throw error;
     }
-
-    return {
-      contacts: data || [],
-      totalCount: count || 0,
-      totalPages: Math.ceil((count || 0) / pageSize)
-    };
   };
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["contacts", currentPage],
     queryFn: () => fetchContacts({ page: currentPage }),
   });
+
+  // Debug log to see the received data
+  useEffect(() => {
+    console.log("Current data state:", data);
+  }, [data]);
 
   if (error) {
     toast({
@@ -139,7 +160,7 @@ const ContactsPage = () => {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={5} className="text-center py-4">
-                        No contact submissions found
+                        No contact submissions found. {data?.totalCount > 0 ? 'Try refreshing the page.' : ''}
                       </TableCell>
                     </TableRow>
                   )}
@@ -192,6 +213,12 @@ const ContactsPage = () => {
                 </Pagination>
               </div>
             )}
+
+            <div className="text-center mt-6">
+              <Button onClick={() => refetch()} variant="outline">
+                Refresh Data
+              </Button>
+            </div>
           </>
         )}
       </div>

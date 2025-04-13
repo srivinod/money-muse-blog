@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -39,36 +38,34 @@ const BlogEditorPage = () => {
     queryKey: ['blog-post', id],
     queryFn: () => fetchBlogPostBySlug(id as string),
     enabled: isEditMode,
-    meta: {
-      onSuccess: (data: BlogPost | null) => {
-        if (data) {
-          setTitle(data.title);
-          setSlug(data.slug);
-          setCategory(data.category);
-          setExcerpt(data.excerpt);
-          setContent(data.content || "");
-          setImageUrl(data.imageUrl);
-          setAuthor(data.author);
-          setDate(data.date);
-        } else {
-          toast({
-            title: "Post not found",
-            description: "The blog post you're trying to edit doesn't exist",
-            variant: "destructive",
-          });
-          navigate("/admin/posts");
-        }
-      }
-    },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error fetching post:", error);
       toast({
-        title: "Error",
-        description: "Failed to load the post. Please try again.",
+        title: "Post not found",
+        description: "The blog post you're trying to edit doesn't exist",
         variant: "destructive",
       });
       navigate("/admin/posts");
-    }
+    },
+    onSuccess: (data: BlogPost | null) => {
+      if (data) {
+        setTitle(data.title);
+        setSlug(data.slug);
+        setCategory(data.category);
+        setExcerpt(data.excerpt);
+        setContent(data.content || "");
+        setImageUrl(data.imageUrl);
+        setAuthor(data.author);
+        setDate(data.date);
+      } else {
+        toast({
+          title: "Post not found",
+          description: "The blog post you're trying to edit doesn't exist",
+          variant: "destructive",
+        });
+        navigate("/admin/posts");
+      }
+    },
   });
 
   // Create post mutation

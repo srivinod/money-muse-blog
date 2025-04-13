@@ -50,6 +50,7 @@ export type Database = {
           created_at: string
           date: string
           excerpt: string
+          featured: boolean | null
           id: string
           imageurl: string
           slug: string
@@ -63,6 +64,7 @@ export type Database = {
           created_at?: string
           date: string
           excerpt: string
+          featured?: boolean | null
           id?: string
           imageurl: string
           slug: string
@@ -76,6 +78,7 @@ export type Database = {
           created_at?: string
           date?: string
           excerpt?: string
+          featured?: boolean | null
           id?: string
           imageurl?: string
           slug?: string

@@ -39,23 +39,25 @@ const BlogEditorPage = () => {
     queryKey: ['blog-post', id],
     queryFn: () => fetchBlogPostBySlug(id as string),
     enabled: isEditMode,
-    onSuccess: (data) => {
-      if (data) {
-        setTitle(data.title);
-        setSlug(data.slug);
-        setCategory(data.category);
-        setExcerpt(data.excerpt);
-        setContent(data.content || "");
-        setImageUrl(data.imageUrl);
-        setAuthor(data.author);
-        setDate(data.date);
-      } else {
-        toast({
-          title: "Post not found",
-          description: "The blog post you're trying to edit doesn't exist",
-          variant: "destructive",
-        });
-        navigate("/admin/posts");
+    meta: {
+      onSuccess: (data: BlogPost | null) => {
+        if (data) {
+          setTitle(data.title);
+          setSlug(data.slug);
+          setCategory(data.category);
+          setExcerpt(data.excerpt);
+          setContent(data.content || "");
+          setImageUrl(data.imageUrl);
+          setAuthor(data.author);
+          setDate(data.date);
+        } else {
+          toast({
+            title: "Post not found",
+            description: "The blog post you're trying to edit doesn't exist",
+            variant: "destructive",
+          });
+          navigate("/admin/posts");
+        }
       }
     },
     onError: (error) => {

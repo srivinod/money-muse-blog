@@ -16,12 +16,14 @@ const BlogDetailPage = () => {
   const { data: post, isLoading: isPostLoading, error: postError } = useQuery({
     queryKey: ['blog-post', slug],
     queryFn: () => fetchBlogPostBySlug(slug as string),
-    onError: (error) => {
-      toast({
-        title: "Post not found",
-        description: "Sorry, we couldn't find the article you're looking for.",
-        variant: "destructive"
-      });
+    meta: {
+      onError: (error: any) => {
+        toast({
+          title: "Post not found",
+          description: "Sorry, we couldn't find the article you're looking for.",
+          variant: "destructive"
+        });
+      }
     }
   });
   

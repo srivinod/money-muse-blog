@@ -1,40 +1,41 @@
 
 import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark } from "lucide-react";
+import React from "react";
 
 export const categories = [
   {
     title: "Saving Money",
     slug: "saving",
     description: "Strategies to build your savings and secure your financial future",
-    icon: <PiggyBank className="h-6 w-6 text-primary" />,
+    icon: React.createElement(PiggyBank, { className: "h-6 w-6 text-primary" }),
     longDescription: "Discover practical tips and strategies to boost your savings rate, maximize your emergency fund, and create a solid financial safety net. From automated savings techniques to cutting unnecessary expenses, learn how to make your money work smarter for you."
   },
   {
     title: "Budgeting",
     slug: "budgeting",
     description: "Take control of your finances with effective budgeting techniques",
-    icon: <DollarSign className="h-6 w-6 text-primary" />,
+    icon: React.createElement(DollarSign, { className: "h-6 w-6 text-primary" }),
     longDescription: "Master your money with powerful budgeting strategies that work for your lifestyle. Learn how to track expenses, allocate funds effectively, and find the perfect balance between saving and spending. Our budgeting guides will help you create a financial plan that brings you peace of mind."
   },
   {
     title: "Investing",
     slug: "investing",
     description: "Grow your wealth through smart investment decisions",
-    icon: <LineChart className="h-6 w-6 text-primary" />,
+    icon: React.createElement(LineChart, { className: "h-6 w-6 text-primary" }),
     longDescription: "Navigate the world of investments with confidence. From stocks and bonds to retirement accounts and real estate, explore different investment vehicles and strategies tailored to your goals and risk tolerance. Learn how to build a diversified portfolio that can weather market fluctuations and grow your wealth over time."
   },
   {
     title: "Frugal Living",
     slug: "frugal-living",
     description: "Live well while spending less and saving more",
-    icon: <ShoppingBag className="h-6 w-6 text-primary" />,
+    icon: React.createElement(ShoppingBag, { className: "h-6 w-6 text-primary" }),
     longDescription: "Embrace the frugal lifestyle without feeling deprived. Discover creative ways to reduce your spending while maintaining a high quality of life. From smart shopping techniques to DIY solutions, learn how small changes in your daily habits can lead to significant savings over time."
   },
   {
     title: "Financial Planning",
     slug: "financial-planning",
     description: "Create a roadmap for your financial future and goals",
-    icon: <Landmark className="h-6 w-6 text-primary" />,
+    icon: React.createElement(Landmark, { className: "h-6 w-6 text-primary" }),
     longDescription: "Build a comprehensive financial plan that aligns with your life goals. Whether you're planning for retirement, saving for a home, or creating an education fund, our financial planning resources will help you make informed decisions at every stage of life. Learn how to set meaningful financial goals and develop strategies to achieve them."
   }
 ];
@@ -130,37 +131,37 @@ export const resources = [
   {
     title: "Budget Planner Spreadsheet",
     description: "A comprehensive Excel template to track your income, expenses, and savings goals.",
-    icon: <DollarSign className="h-6 w-6 text-primary" />,
+    icon: React.createElement(DollarSign, { className: "h-6 w-6 text-primary" }),
     link: "#"
   },
   {
     title: "Compound Interest Calculator",
     description: "See how your investments can grow over time with the power of compound interest.",
-    icon: <LineChart className="h-6 w-6 text-primary" />,
+    icon: React.createElement(LineChart, { className: "h-6 w-6 text-primary" }),
     link: "#"
   },
   {
     title: "Debt Payoff Planner",
     description: "Compare debt snowball vs. avalanche methods and create your personalized debt elimination plan.",
-    icon: <ShoppingBag className="h-6 w-6 text-primary" />,
+    icon: React.createElement(ShoppingBag, { className: "h-6 w-6 text-primary" }),
     link: "#"
   },
   {
     title: "Retirement Calculator",
     description: "Estimate how much you need to save for a comfortable retirement based on your goals.",
-    icon: <Landmark className="h-6 w-6 text-primary" />,
+    icon: React.createElement(Landmark, { className: "h-6 w-6 text-primary" }),
     link: "#"
   },
   {
     title: "Emergency Fund Calculator",
     description: "Determine how much you should have in your emergency fund based on your personal situation.",
-    icon: <PiggyBank className="h-6 w-6 text-primary" />,
+    icon: React.createElement(PiggyBank, { className: "h-6 w-6 text-primary" }),
     link: "#"
   },
   {
     title: "50/30/20 Budget Template",
     description: "A simple template to implement the popular 50/30/20 budgeting rule in your financial life.",
-    icon: <DollarSign className="h-6 w-6 text-primary" />,
+    icon: React.createElement(DollarSign, { className: "h-6 w-6 text-primary" }),
     link: "#"
   }
 ];

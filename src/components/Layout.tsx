@@ -23,8 +23,8 @@ const Layout = () => {
     // Update meta tags based on current route
     const updateMetaTags = () => {
       const path = location.pathname;
-      let title = "Money Muse - Master Your Money, One Step at a Time";
-      let description = "Money Muse provides practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.";
+      let title = "Finance90 - Master Your Money, One Step at a Time";
+      let description = "Finance90 provides practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.";
       
       // If we're on a blog post page and have post data, use its meta information
       if (isBlogPost && blogPost) {

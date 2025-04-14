@@ -129,7 +129,7 @@ const HomePage = () => {
       <section className="py-16 bg-gray-50">
         <div className="container-custom">
           <div className="text-left mb-6">
-            <h2 className="text-3xl md:text-3xl font-bold mb-4">Featured Articles</h2> 
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Featured Articles</h2> 
           </div>
           
           {isFeaturedLoading ? (
@@ -172,7 +172,7 @@ const HomePage = () => {
                           {featuredPosts[0]?.title || "Featured post"}
                         </h3>
                       </Link>
-                      <p className="text-gray-600 mb-6 text-lg">
+                      <p className="text-gray-600 mb-6 ">
                         {featuredPosts[0]?.excerpt || "No excerpt available"}
                       </p>
                       <div className="flex items-center justify-between text-sm text-gray-500">

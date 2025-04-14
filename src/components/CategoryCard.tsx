@@ -17,7 +17,7 @@ const CategoryCard = ({ title, description, icon, slug }: CategoryCardProps) => 
         <h3 className="text-xl font-bold mb-2">{title}</h3>
         <p className="text-gray-600 mb-4">{description}</p>
       </div>
-      <div className="mt-auto pt-4 border-t border-gray-100 w-full">
+      <div className="mt-auto text-center pt-4 border-t border-gray-100 w-full">
         <Link
           to={`/category/${slug}`}
           className="text-primary hover:text-primary-dark font-medium inline-flex items-center transition-colors"

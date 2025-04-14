@@ -1,5 +1,5 @@
 import React from 'react';  // Ensure React is imported at the top
-import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark, Calendar, User } from "lucide-react";
+import { PiggyBank, LineChart, DollarSign, ShoppingBag, Landmark, Calendar, User, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import BlogPostCard from "@/components/BlogPostCard";
 import CategoryCard from "@/components/CategoryCard";
@@ -47,6 +47,67 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative bg-white py-20 md:py-15 text-center">
         <div className="absolute inset-0 bg-grid-white/10 bg-[length:20px_20px] z-0"></div>
+        
+        {/* Decorative Money Shapes */}
+        <div className="absolute inset-0 overflow-hidden z-0">
+          {/* Diamond Shape */}
+          <div className="absolute top-20 left-10 w-16 h-16 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
+              <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2"/>
+              <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </div>
+          
+          {/* Credit Card */}
+          <div className="absolute top-40 right-20 w-12 h-12 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+              <path d="M3 9H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M7 12H10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M7 15H10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          
+          {/* Simple Circle */}
+          <div className="absolute bottom-20 left-1/4 w-14 h-14 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </div>
+          
+          {/* Plus Shape */}
+          <div className="absolute bottom-40 right-1/3 w-10 h-10 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+              <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </div>
+
+          {/* Additional Credit Card */}
+          <div className="absolute top-60 left-1/3 w-10 h-10 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
+              <path d="M3 9H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M7 12H10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+
+          {/* Simple Circle */}
+          <div className="absolute bottom-60 right-1/4 w-12 h-12 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </div>
+
+          {/* Simple Circle */}
+          <div className="absolute top-80 left-1/4 w-10 h-10 opacity-10">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </div>
+        </div>
+
         <div className="container-custom relative z-10">
           <div className="max-w-3xl mx-auto text-center text-gray-900">
             <h1 className="text-4xl md:text-5xl font-bold mb-5 animate-fade-in">
@@ -56,8 +117,9 @@ const HomePage = () => {
             <p className="text-xl md:text-xl mb-8 text-gray-700">
               Practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.
             </p>
-            <Link to="/category/all" className="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-6 py-3 rounded-md transition-colors duration-300">
-              Explore Our Articles
+            <Link to="/category/all" className="group inline-flex items-center gap-2 bg-primary text-white hover:bg-primary-dark font-semibold px-6 py-3 rounded-md transition-all duration-300">
+              Learn How
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
         </div>

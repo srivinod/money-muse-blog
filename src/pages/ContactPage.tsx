@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Mail, MapPin, Phone, Send, Shield } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -19,6 +18,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+// Declare grecaptcha type
+declare global {
+  interface Window {
+    grecaptcha: {
+      reset: () => void;
+    };
+  }
+}
+
 // Form validation schema
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,6 +44,7 @@ const ContactPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   
   // Initialize form with react-hook-form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -78,14 +87,37 @@ const ContactPage = () => {
           {
             name: values.name,
             email: values.email,
-            message: values.message,
-            captcha_verified: true
+            message: values.message
           }
-        ]);
+        ])
+        .select();
       
       if (error) {
         console.error("Supabase error:", error);
-        throw error;
+        console.error("Error details:", {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        
+        // Check for specific error types
+        if (error.code === '23505') {
+          toast({
+            title: "Duplicate Submission",
+            description: "You have already submitted this message. Please wait before submitting again.",
+            variant: "destructive",
+          });
+        } else if (error.code === '42501') {
+          toast({
+            title: "Permission Error",
+            description: "You don't have permission to submit this form. Please contact support.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+        return;
       }
       
       console.log("Form submission successful:", data);
@@ -98,18 +130,13 @@ const ContactPage = () => {
       // Reset form
       form.reset();
       setCaptchaValue(null);
-      // Reset reCAPTCHA
-      const recaptchaElement = document.querySelector('iframe[src*="recaptcha"]')?.parentElement;
-      if (recaptchaElement) {
-        // Force reCAPTCHA reset
-        (recaptchaElement as any)?.children[0]?.contentWindow?.grecaptcha?.reset();
-      }
-
+      // Reset reCAPTCHA using the ref
+      recaptchaRef.current?.reset();
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
         title: "Submission Error",
-        description: "There was a problem sending your message. Please try again.",
+        description: error instanceof Error ? error.message : "There was a problem sending your message. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -256,7 +283,8 @@ const ContactPage = () => {
                       </div>
                       <div className="flex justify-center sm:justify-start">
                         <ReCAPTCHA
-                          sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // This is Google's test key, replace with your own in production
+                          ref={recaptchaRef}
+                          sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                           onChange={handleCaptchaChange}
                         />
                       </div>

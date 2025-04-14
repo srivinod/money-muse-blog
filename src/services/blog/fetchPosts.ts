@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, transformDbPostToBlogPost } from "./types";
 import { categories } from "@/data/blogData";
@@ -7,15 +6,21 @@ import { categories } from "@/data/blogData";
 export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from("blog_posts")
-    .select("*")
-    .order("date", { ascending: false });
+    .select("*");
 
   if (error) {
     console.error("Error fetching blog posts:", error);
     throw error;
   }
 
-  return data.map(transformDbPostToBlogPost);
+  // Sort by actual date values
+  const sortedData = data.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Newest first
+  });
+
+  return sortedData.map(transformDbPostToBlogPost);
 };
 
 // Fetch featured blog posts
@@ -23,32 +28,42 @@ export const fetchFeaturedPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
-    .eq("featured", true)
-    .order("date", { ascending: false })
-    .limit(6);
+    .eq("featured", true);
 
   if (error) {
     console.error("Error fetching featured posts:", error);
     throw error;
   }
 
-  return data.map(transformDbPostToBlogPost);
+  // Sort by actual date values
+  const sortedData = data.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Newest first
+  }).slice(0, 6);
+
+  return sortedData.map(transformDbPostToBlogPost);
 };
 
 // Fetch latest blog posts
 export const fetchLatestPosts = async (): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from("blog_posts")
-    .select("*")
-    .order("date", { ascending: false })
-    .limit(6);
+    .select("*");
 
   if (error) {
     console.error("Error fetching latest posts:", error);
     throw error;
   }
 
-  return data.map(transformDbPostToBlogPost);
+  // Sort by actual date values
+  const sortedData = data.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Newest first
+  }).slice(0, 6);
+
+  return sortedData.map(transformDbPostToBlogPost);
 };
 
 // Fetch a single blog post by slug
@@ -107,8 +122,7 @@ export const fetchBlogPostsByCategory = async (categorySlug: string): Promise<Bl
   
   const query = supabase
     .from("blog_posts")
-    .select("*")
-    .order("date", { ascending: false });
+    .select("*");
     
   if (categorySlug !== "all") {
     query.eq("category", category?.title);
@@ -121,7 +135,14 @@ export const fetchBlogPostsByCategory = async (categorySlug: string): Promise<Bl
     throw error;
   }
 
-  return data.map(transformDbPostToBlogPost);
+  // Sort by actual date values
+  const sortedData = data.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Newest first
+  });
+
+  return sortedData.map(transformDbPostToBlogPost);
 };
 
 // Fetch related blog posts (same category, excluding current post)
@@ -130,14 +151,19 @@ export const fetchRelatedPosts = async (slug: string, category: string): Promise
     .from("blog_posts")
     .select("*")
     .eq("category", category)
-    .neq("slug", slug)
-    .order("date", { ascending: false })
-    .limit(3);
+    .neq("slug", slug);
 
   if (error) {
     console.error("Error fetching related posts:", error);
     throw error;
   }
 
-  return data.map(transformDbPostToBlogPost);
+  // Sort by actual date values
+  const sortedData = data.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Newest first
+  }).slice(0, 3);
+
+  return sortedData.map(transformDbPostToBlogPost);
 };

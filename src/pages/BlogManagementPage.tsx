@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus, Edit, Trash2, Search, Star } from "lucide-react";
@@ -40,7 +39,12 @@ const BlogManagementPage = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteBlogPost,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-posts'] });
+      // Invalidate all blog post queries
+      queryClient.invalidateQueries({ 
+        queryKey: ['blog-posts'],
+        exact: false,
+        refetchType: 'all'
+      });
       toast({
         title: "Post deleted",
         description: "The blog post has been deleted successfully",

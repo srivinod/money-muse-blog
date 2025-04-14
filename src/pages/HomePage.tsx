@@ -51,7 +51,7 @@ const HomePage = () => {
         {/* Decorative Money Shapes */}
         <div className="absolute inset-0 overflow-hidden z-0">
           {/* Diamond Shape */}
-          <div className="absolute top-20 left-10 w-16 h-16 opacity-10">
+          <div className="absolute top-10 md:top-20 left-5 md:left-10 w-12 md:w-16 h-12 md:h-16 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
               <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2"/>
@@ -60,7 +60,7 @@ const HomePage = () => {
           </div>
           
           {/* Credit Card */}
-          <div className="absolute top-40 right-20 w-12 h-12 opacity-10">
+          <div className="absolute top-20 md:top-40 right-5 md:right-20 w-8 md:w-12 h-8 md:h-12 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
               <path d="M3 9H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -70,14 +70,14 @@ const HomePage = () => {
           </div>
           
           {/* Simple Circle */}
-          <div className="absolute bottom-20 left-1/4 w-14 h-14 opacity-10">
+          <div className="absolute bottom-10 md:bottom-20 left-1/4 w-10 md:w-14 h-10 md:h-14 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
             </svg>
           </div>
           
           {/* Plus Shape */}
-          <div className="absolute bottom-40 right-1/3 w-10 h-10 opacity-10">
+          <div className="absolute bottom-20 md:bottom-40 right-1/3 w-8 md:w-10 h-8 md:h-10 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
               <path d="M12 8V16M8 12H16" stroke="currentColor" strokeWidth="2"/>
@@ -85,7 +85,7 @@ const HomePage = () => {
           </div>
 
           {/* Additional Credit Card */}
-          <div className="absolute top-60 left-1/3 w-10 h-10 opacity-10">
+          <div className="absolute top-30 md:top-60 left-1/3 w-8 md:w-10 h-8 md:h-10 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2"/>
               <path d="M3 9H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -94,14 +94,14 @@ const HomePage = () => {
           </div>
 
           {/* Simple Circle */}
-          <div className="absolute bottom-60 right-1/4 w-12 h-12 opacity-10">
+          <div className="absolute bottom-30 md:bottom-60 right-1/4 w-8 md:w-12 h-8 md:h-12 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
             </svg>
           </div>
 
           {/* Simple Circle */}
-          <div className="absolute top-80 left-1/4 w-10 h-10 opacity-10">
+          <div className="absolute top-40 md:top-80 left-1/4 w-8 md:w-10 h-8 md:h-10 opacity-10">
             <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-primary">
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
             </svg>

@@ -10,7 +10,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="font-playfair text-2xl font-bold text-primary">finance90</span>
+            <div className="flex items-center">
+            <span className="font-playfair text-2xl font-bold">
+              <span className="text-black">Finance</span>
+              <span className="text-green-600"> 90</span>
+            </span>
+          </div>
             </Link>
             <p className="mt-4 text-gray-600">
               Helping you master your money, one step at a time.

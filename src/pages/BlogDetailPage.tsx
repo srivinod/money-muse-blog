@@ -73,7 +73,7 @@ const BlogDetailPage = () => {
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col md:flex-row justify-center gap-4 px-4">
       {/* Left AdSense sidebar - only visible on md screens and up */}
       <div className="hidden md:block sticky top-24 self-start" style={{ width: '160px' }}>
         <AdSense
@@ -84,7 +84,7 @@ const BlogDetailPage = () => {
       </div>
       
       {/* Main content with reduced width */}
-      <div className="max-w-3xl mx-4 py-8 md:py-12">
+      <div className="w-full md:max-w-3xl mx-auto py-8 md:py-12">
         <div className="mb-3">
           <Link to={`/blog/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`} className="inline-flex items-center text-primary hover:underline mb-4">
             <ArrowLeft size={16} className="mr-1" />
@@ -97,17 +97,17 @@ const BlogDetailPage = () => {
             <img 
               src={post.imageUrl} 
               alt={post.title}
-              className="w-full h-[400px] object-cover"
+              className="w-full h-[200px] md:h-[400px] object-cover"
             />
           )}
           
-          <CardContent className="p-8">
-            <h1 className="text-3xl font-bold mb-6">{post.title}</h1>
+          <CardContent className="p-4 md:p-8">
+            <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">{post.title}</h1>
             
-            <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+            <div className="mb-4 md:mb-6 flex flex-wrap items-center gap-2 md:gap-4 text-sm text-gray-500">
               <Link 
                 to={`/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`}
-                className="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium"
+                className="bg-primary/10 text-primary px-2 md:px-3 py-1 rounded-full font-medium"
               >
                 {post.category}
               </Link>
@@ -121,9 +121,9 @@ const BlogDetailPage = () => {
               </div>
             </div>
             
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-sm md:prose-lg max-w-none break-words overflow-x-hidden">
               {post.excerpt && (
-                <p className="text-lg text-gray-700 mb-4">
+                <p className="text-base md:text-lg text-gray-700 mb-4 break-words">
                   {post.excerpt}
                 </p>
               )}
@@ -132,7 +132,7 @@ const BlogDetailPage = () => {
               {post.content ? (
                 <div 
                   dangerouslySetInnerHTML={{ __html: post.content }} 
-                  className="mt-6"
+                  className="mt-4 md:mt-6 break-words overflow-x-hidden prose prose-sm md:prose-lg max-w-none [&_p]:mb-4 [&_p:last-child]:mb-0 [&_br]:block [&_br]:h-4"
                 />
               ) : (
                 <p className="text-gray-500 italic">No content available for this article.</p>
@@ -143,13 +143,13 @@ const BlogDetailPage = () => {
         
         {/* Related posts section */}
         {relatedPosts.length > 0 && (
-          <section className="mt-12">
-            <h2 className="text-xl md:text-2xl font-bold mb-6">Related Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <section className="mt-8 md:mt-12">
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Related Articles</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               {relatedPosts.map((related, index) => (
                 <div key={index} className="border rounded-lg overflow-hidden shadow-md flex flex-col h-full">
                   <div className="p-4 flex-grow">
-                    <h3 className="text-lg font-semibold mb-2">{related.title}</h3>
+                    <h3 className="text-base md:text-lg font-semibold mb-2">{related.title}</h3>
                     <p className="text-gray-600 text-sm mb-2">{related.excerpt}</p>
                   </div>
                   <div className="p-4 pt-0 border-t border-gray-100">

@@ -117,7 +117,7 @@ const HomePage = () => {
             <p className="text-xl md:text-xl mb-8 text-gray-700">
               Practical financial advice and strategies to help you save more, spend wisely, and build the future you deserve.
             </p>
-            <Link to="/category/all" className="group inline-flex items-center gap-2 bg-primary text-white hover:bg-primary-dark font-semibold px-6 py-3 rounded-md transition-all duration-300">
+            <Link to="/blog" className="group inline-flex items-center gap-2 bg-primary text-white hover:bg-primary-dark font-semibold px-6 py-3 rounded-md transition-all duration-300">
               Learn How
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>

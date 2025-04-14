@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,7 +30,7 @@ export const useBlogForm = (postData?: BlogPost | null, id?: string) => {
   // Update form fields when post data is loaded
   useEffect(() => {
     if (postData) {
-      console.log("Post data loaded:", postData);
+      console.log("Post data loaded in useBlogForm:", postData);
       setTitle(postData.title || "");
       setSlug(postData.slug || "");
       setCategory(postData.category || "");

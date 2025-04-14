@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -63,6 +62,13 @@ const BlogEditorPage = () => {
       return;
     }
   }, [isAuthenticated, isAdmin, navigate]);
+
+  // Add debug logging
+  useEffect(() => {
+    if (postData) {
+      console.log("Post data in BlogEditorPage:", postData);
+    }
+  }, [postData]);
 
   if (!isAuthenticated || !isAdmin) {
     return null;

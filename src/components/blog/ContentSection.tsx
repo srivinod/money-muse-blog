@@ -1,7 +1,7 @@
-
 import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/RichTextEditor";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect } from "react";
 
 interface ContentSectionProps {
   content: string;
@@ -9,6 +9,11 @@ interface ContentSectionProps {
 }
 
 const ContentSection = ({ content, setContent }: ContentSectionProps) => {
+  // Add debug logging
+  useEffect(() => {
+    console.log("Content in ContentSection:", content);
+  }, [content]);
+
   return (
     <Card>
       <CardHeader className="pb-3">

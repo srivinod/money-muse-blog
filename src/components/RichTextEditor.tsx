@@ -1,18 +1,21 @@
-
-import { useState } from "react";
+import React from 'react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
 import { 
-  Bold, Italic, Underline, List, ListOrdered, 
+  Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, 
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Link as LinkIcon, Heading1, Heading2, Heading3, 
-  Image, Undo, Redo, Strikethrough, Quote,
+  Image as ImageIcon, Undo, Redo, Strikethrough, Quote,
   IndentDecrease, IndentIncrease, Code
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import EditorToolbar from "./EditorToolbar";
 
 interface RichTextEditorProps {
   value: string;
@@ -20,121 +23,165 @@ interface RichTextEditorProps {
 }
 
 const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
-  const [selection, setSelection] = useState({ start: 0, end: 0 });
-  
-  const handleTextAreaSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-    const target = e.target as HTMLTextAreaElement;
-    setSelection({
-      start: target.selectionStart,
-      end: target.selectionEnd
-    });
-  };
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        paragraph: {
+          HTMLAttributes: {
+            class: 'break-words',
+          },
+        },
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'max-w-full h-auto',
+        },
+      }),
+      Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-primary hover:underline break-all',
+        },
+      }),
+      Placeholder.configure({
+        placeholder: 'Write your blog post content here...',
+      }),
+    ],
+    content: value,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: 'prose prose-sm md:prose-lg max-w-none focus:outline-none break-words',
+      },
+    },
+  });
 
-  const insertMarkup = (before: string, after: string = "") => {
-    const newValue = 
-      value.substring(0, selection.start) + 
-      before + 
-      value.substring(selection.start, selection.end) + 
-      after + 
-      value.substring(selection.end);
-    
-    onChange(newValue);
-  };
+  React.useEffect(() => {
+    console.log("RichTextEditor value:", value);
+    if (editor && value) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
-  // Handler functions for different formatting operations
-  const formatHandlers = {
-    insertLink: () => {
-      const url = prompt("Enter the URL:", "https://");
-      if (url) {
-        const selectedText = value.substring(selection.start, selection.end);
-        const linkText = selectedText || "link text";
-        insertMarkup(`<a href="${url}">`, `</a>`);
-      }
-    },
-    
-    insertImage: () => {
-      const url = prompt("Enter image URL:", "https://");
-      if (url) {
-        const alt = prompt("Enter image description:", "Image") || "Image";
-        insertMarkup(`<img src="${url}" alt="${alt}" />`);
-      }
-    },
-    
-    insertQuote: () => {
-      insertMarkup('<blockquote>', '</blockquote>');
-    },
-    
-    insertCode: () => {
-      insertMarkup('<code>', '</code>');
+  if (!editor) {
+    return null;
+  }
+
+  const addImage = () => {
+    const url = window.prompt('Enter the URL of the image:');
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run();
     }
   };
 
-  // Group formatting options by category
+  const addLink = () => {
+    const url = window.prompt('Enter the URL:');
+    if (url) {
+      editor.chain().focus().setLink({ href: url }).run();
+    }
+  };
+
   const formattingOptions = [
     {
       category: "Text Style",
       items: [
-        { icon: <Bold className="h-4 w-4" />, action: () => insertMarkup("<b>", "</b>"), title: "Bold" },
-        { icon: <Italic className="h-4 w-4" />, action: () => insertMarkup("<i>", "</i>"), title: "Italic" },
-        { icon: <Underline className="h-4 w-4" />, action: () => insertMarkup("<u>", "</u>"), title: "Underline" },
-        { icon: <Strikethrough className="h-4 w-4" />, action: () => insertMarkup("<s>", "</s>"), title: "Strikethrough" }
+        { icon: <Bold className="h-4 w-4" />, action: () => editor.chain().focus().toggleBold().run(), title: "Bold", isActive: editor.isActive('bold') },
+        { icon: <Italic className="h-4 w-4" />, action: () => editor.chain().focus().toggleItalic().run(), title: "Italic", isActive: editor.isActive('italic') },
+        { icon: <UnderlineIcon className="h-4 w-4" />, action: () => editor.chain().focus().toggleUnderline().run(), title: "Underline", isActive: editor.isActive('underline') },
+        { icon: <Strikethrough className="h-4 w-4" />, action: () => editor.chain().focus().toggleStrike().run(), title: "Strikethrough", isActive: editor.isActive('strike') }
       ]
     },
     {
       category: "Headings",
       items: [
-        { icon: <Heading1 className="h-4 w-4" />, action: () => insertMarkup("<h1>", "</h1>"), title: "Heading 1" },
-        { icon: <Heading2 className="h-4 w-4" />, action: () => insertMarkup("<h2>", "</h2>"), title: "Heading 2" },
-        { icon: <Heading3 className="h-4 w-4" />, action: () => insertMarkup("<h3>", "</h3>"), title: "Heading 3" }
+        { icon: <Heading1 className="h-4 w-4" />, action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(), title: "Heading 1", isActive: editor.isActive('heading', { level: 1 }) },
+        { icon: <Heading2 className="h-4 w-4" />, action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), title: "Heading 2", isActive: editor.isActive('heading', { level: 2 }) },
+        { icon: <Heading3 className="h-4 w-4" />, action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(), title: "Heading 3", isActive: editor.isActive('heading', { level: 3 }) }
       ]
     },
     {
       category: "Lists",
       items: [
-        { icon: <List className="h-4 w-4" />, action: () => insertMarkup("<ul>\n  <li>", "</li>\n</ul>"), title: "Bullet List" },
-        { icon: <ListOrdered className="h-4 w-4" />, action: () => insertMarkup("<ol>\n  <li>", "</li>\n</ol>"), title: "Numbered List" },
-        { icon: <IndentDecrease className="h-4 w-4" />, action: () => insertMarkup("&emsp;"), title: "Decrease Indent" },
-        { icon: <IndentIncrease className="h-4 w-4" />, action: () => insertMarkup("&emsp;"), title: "Increase Indent" }
+        { icon: <List className="h-4 w-4" />, action: () => editor.chain().focus().toggleBulletList().run(), title: "Bullet List", isActive: editor.isActive('bulletList') },
+        { icon: <ListOrdered className="h-4 w-4" />, action: () => editor.chain().focus().toggleOrderedList().run(), title: "Numbered List", isActive: editor.isActive('orderedList') },
+        { icon: <IndentDecrease className="h-4 w-4" />, action: () => editor.chain().focus().liftListItem('listItem').run(), title: "Decrease Indent" },
+        { icon: <IndentIncrease className="h-4 w-4" />, action: () => editor.chain().focus().sinkListItem('listItem').run(), title: "Increase Indent" }
       ]
     },
     {
       category: "Alignment",
       items: [
-        { icon: <AlignLeft className="h-4 w-4" />, action: () => insertMarkup('<div style="text-align: left;">', '</div>'), title: "Align Left" },
-        { icon: <AlignCenter className="h-4 w-4" />, action: () => insertMarkup('<div style="text-align: center;">', '</div>'), title: "Align Center" },
-        { icon: <AlignRight className="h-4 w-4" />, action: () => insertMarkup('<div style="text-align: right;">', '</div>'), title: "Align Right" },
-        { icon: <AlignJustify className="h-4 w-4" />, action: () => insertMarkup('<div style="text-align: justify;">', '</div>'), title: "Justify" }
+        { icon: <AlignLeft className="h-4 w-4" />, action: () => editor.chain().focus().setTextAlign('left').run(), title: "Align Left", isActive: editor.isActive({ textAlign: 'left' }) },
+        { icon: <AlignCenter className="h-4 w-4" />, action: () => editor.chain().focus().setTextAlign('center').run(), title: "Align Center", isActive: editor.isActive({ textAlign: 'center' }) },
+        { icon: <AlignRight className="h-4 w-4" />, action: () => editor.chain().focus().setTextAlign('right').run(), title: "Align Right", isActive: editor.isActive({ textAlign: 'right' }) },
+        { icon: <AlignJustify className="h-4 w-4" />, action: () => editor.chain().focus().setTextAlign('justify').run(), title: "Justify", isActive: editor.isActive({ textAlign: 'justify' }) }
       ]
     },
     {
       category: "Insert",
       items: [
-        { icon: <LinkIcon className="h-4 w-4" />, action: formatHandlers.insertLink, title: "Insert Link" },
-        { icon: <Image className="h-4 w-4" />, action: formatHandlers.insertImage, title: "Insert Image" },
-        { icon: <Quote className="h-4 w-4" />, action: formatHandlers.insertQuote, title: "Insert Quote" },
-        { icon: <Code className="h-4 w-4" />, action: formatHandlers.insertCode, title: "Insert Code" }
+        { icon: <LinkIcon className="h-4 w-4" />, action: addLink, title: "Insert Link" },
+        { icon: <ImageIcon className="h-4 w-4" />, action: addImage, title: "Insert Image" },
+        { icon: <Quote className="h-4 w-4" />, action: () => editor.chain().focus().toggleBlockquote().run(), title: "Insert Quote", isActive: editor.isActive('blockquote') },
+        { icon: <Code className="h-4 w-4" />, action: () => editor.chain().focus().toggleCodeBlock().run(), title: "Insert Code", isActive: editor.isActive('codeBlock') }
       ]
     },
     {
       category: "History",
       items: [
-        { icon: <Undo className="h-4 w-4" />, action: () => document.execCommand('undo'), title: "Undo" },
-        { icon: <Redo className="h-4 w-4" />, action: () => document.execCommand('redo'), title: "Redo" }
+        { icon: <Undo className="h-4 w-4" />, action: () => editor.chain().focus().undo().run(), title: "Undo" },
+        { icon: <Redo className="h-4 w-4" />, action: () => editor.chain().focus().redo().run(), title: "Redo" }
       ]
     }
   ];
 
   return (
     <div className="border rounded-md">
-      <EditorToolbar formattingOptions={formattingOptions} />
+      <div className="bg-gray-50 p-2 border-b overflow-x-auto">
+        <div className="flex flex-wrap gap-1">
+          {formattingOptions.map((category, categoryIndex) => (
+            <React.Fragment key={category.category}>
+              {categoryIndex > 0 && <div className="w-px h-6 bg-gray-300 mx-1 self-center" />}
+              
+              <div className="flex items-center">
+                <TooltipProvider>
+                  {category.items.map((item, index) => (
+                    <Tooltip key={index}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={item.action}
+                          className={`h-8 w-8 p-0 ${item.isActive ? 'bg-gray-200' : ''}`}
+                        >
+                          {item.icon}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{item.title}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </TooltipProvider>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
       
-      <Textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onSelect={handleTextAreaSelect}
-        className="min-h-[300px] border-0 focus-visible:ring-0 resize-y"
-        placeholder="Enter your blog post content here..."
-      />
+      <div className="overflow-x-hidden">
+        <EditorContent 
+          editor={editor} 
+          className="min-h-[300px] p-4 focus-visible:outline-none resize-y prose prose-sm md:prose-lg max-w-none break-words"
+        />
+      </div>
     </div>
   );
 };

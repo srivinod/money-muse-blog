@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ThemeProvider } from "next-themes";
+import { HelmetProvider } from 'react-helmet-async';
 import Layout from "./components/Layout";
 import ScrollToTop from "./components/ScrollToTop";
 import HomePage from "./pages/HomePage";
@@ -76,93 +77,95 @@ const App = () => {
   }, []);
 
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <ScrollToTop />
-            <Toaster />
-            <Sonner />
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<HomePage />} />
-                <Route path="about" element={<AboutPage />} />
-                <Route path="contact" element={<ContactPage />} />
-                <Route path="resources" element={<ResourcesPage />} />
-                <Route path="privacy" element={<PrivacyPage />} />
-                <Route path="terms" element={<TermsPage />} />
-                <Route path="disclaimer" element={<DisclaimerPage />} />
-                <Route path="blog" element={<BlogPage />} />
-                <Route path="blog/category/:categoryName" element={<CategoryPage />} />
-                <Route path="blog/:slug" element={<BlogDetailPage />} />
-                <Route path="login" element={<LoginPage />} />
-                
+    <HelmetProvider>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <TooltipProvider>
+              <ScrollToTop />
+              <Toaster />
+              <Sonner />
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="about" element={<AboutPage />} />
+                  <Route path="contact" element={<ContactPage />} />
+                  <Route path="resources" element={<ResourcesPage />} />
+                  <Route path="privacy" element={<PrivacyPage />} />
+                  <Route path="terms" element={<TermsPage />} />
+                  <Route path="disclaimer" element={<DisclaimerPage />} />
+                  <Route path="blog" element={<BlogPage />} />
+                  <Route path="blog/category/:categoryName" element={<CategoryPage />} />
+                  <Route path="blog/:slug" element={<BlogDetailPage />} />
+                  <Route path="login" element={<LoginPage />} />
+                  
          
-                {/* Admin Routes */}
-                <Route 
-                  path="admin/dashboard" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <AdminDashboardPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="admin/posts" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <BlogManagementPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="admin/categories" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <CategoriesManagementPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="admin/posts/new" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <BlogEditorPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="admin/posts/edit/:id" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <BlogEditorPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="admin/subscribers" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <SubscribersPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="admin/contacts" 
-                  element={
-                    <ProtectedRoute requireAdmin>
-                      <ContactsPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+                  {/* Admin Routes */}
+                  <Route 
+                    path="admin/dashboard" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <AdminDashboardPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="admin/posts" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <BlogManagementPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="admin/categories" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <CategoriesManagementPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="admin/posts/new" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <BlogEditorPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="admin/posts/edit/:id" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <BlogEditorPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="admin/subscribers" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <SubscribersPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="admin/contacts" 
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <ContactsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+              </Routes>
+            </TooltipProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 };
 

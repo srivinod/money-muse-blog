@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
@@ -11,7 +10,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="font-playfair text-2xl font-bold text-primary">Money Muse</span>
+              <span className="font-playfair text-2xl font-bold text-primary">finance90</span>
             </Link>
             <p className="mt-4 text-gray-600">
               Helping you master your money, one step at a time.
@@ -36,27 +35,27 @@ const Footer = () => {
             <h3 className="text-lg font-medium mb-4">Categories</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/category/saving" className="text-gray-600 hover:text-primary transition-colors">
+                <Link to="/blog/category/saving" className="text-gray-600 hover:text-primary transition-colors">
                   Saving Money
                 </Link>
               </li>
               <li>
-                <Link to="/category/budgeting" className="text-gray-600 hover:text-primary transition-colors">
+                <Link to="/blog/category/budgeting" className="text-gray-600 hover:text-primary transition-colors">
                   Budgeting
                 </Link>
               </li>
               <li>
-                <Link to="/category/investing" className="text-gray-600 hover:text-primary transition-colors">
+                <Link to="/blog/category/investing" className="text-gray-600 hover:text-primary transition-colors">
                   Investing
                 </Link>
               </li>
               <li>
-                <Link to="/category/frugal-living" className="text-gray-600 hover:text-primary transition-colors">
+                <Link to="/blog/category/frugal-living" className="text-gray-600 hover:text-primary transition-colors">
                   Frugal Living
                 </Link>
               </li>
               <li>
-                <Link to="/category/financial-planning" className="text-gray-600 hover:text-primary transition-colors">
+                <Link to="/blog/category/financial-planning" className="text-gray-600 hover:text-primary transition-colors">
                   Financial Planning
                 </Link>
               </li>
@@ -123,7 +122,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 text-sm">
-            &copy; {currentYear} Money Muse. All rights reserved.
+            &copy; {currentYear} finance90. All rights reserved.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="mailto:contact@finance90.com" className="text-gray-600 hover:text-primary text-sm flex items-center">

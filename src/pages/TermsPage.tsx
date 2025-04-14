@@ -1,4 +1,3 @@
-
 import PageHeader from "@/components/PageHeader";
 
 const TermsPage = () => {
@@ -19,7 +18,7 @@ const TermsPage = () => {
               </p>
               
               <p>
-                Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the Money Muse website (the "Service") operated by Money Muse ("us", "we", or "our").
+                Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the finance90 website (the "Service") operated by finance90 ("us", "we", or "our").
               </p>
               
               <p>
@@ -43,7 +42,7 @@ const TermsPage = () => {
               <h2 className="text-2xl font-bold mt-8 mb-4">2. Intellectual Property</h2>
               
               <p>
-                The Service and its original content (excluding Content provided by users), features and functionality are and will remain the exclusive property of Money Muse and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Money Muse.
+                The Service and its original content (excluding Content provided by users), features and functionality are and will remain the exclusive property of finance90 and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of finance90.
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">3. User Content</h2>
@@ -63,11 +62,11 @@ const TermsPage = () => {
               <h2 className="text-2xl font-bold mt-8 mb-4">4. Links To Other Web Sites</h2>
               
               <p>
-                Our Service may contain links to third-party web sites or services that are not owned or controlled by Money Muse.
+                Our Service may contain links to third-party web sites or services that are not owned or controlled by finance90.
               </p>
               
               <p>
-                Money Muse has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that Money Muse shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
+                finance90 has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that finance90 shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.
               </p>
               
               <p>
@@ -87,7 +86,7 @@ const TermsPage = () => {
               <h2 className="text-2xl font-bold mt-8 mb-4">6. Limitation Of Liability</h2>
               
               <p>
-                In no event shall Money Muse, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose.
+                In no event shall finance90, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose.
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">7. Disclaimer</h2>
@@ -97,7 +96,7 @@ const TermsPage = () => {
               </p>
               
               <p>
-                Money Muse, its subsidiaries, affiliates, and its licensors do not warrant that a) the Service will function uninterrupted, secure or available at any particular time or location; b) any errors or defects will be corrected; c) the Service is free of viruses or other harmful components; or d) the results of using the Service will meet your requirements.
+                finance90, its subsidiaries, affiliates, and its licensors do not warrant that a) the Service will function uninterrupted, secure or available at any particular time or location; b) any errors or defects will be corrected; c) the Service is free of viruses or other harmful components; or d) the results of using the Service will meet your requirements.
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">8. Governing Law</h2>

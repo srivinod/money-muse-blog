@@ -230,7 +230,7 @@ const HomePage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Link to="/category/all" className="btn-outline">
+            <Link to="/blog" className="btn-outline">
               View All Articles
             </Link>
           </div>
@@ -241,7 +241,7 @@ const HomePage = () => {
       <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Explore Categories</h2>
+            <h2 className="text-3xl md:text-3xl font-bold mb-4">Explore Categories</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Dive into our specialized topics to find exactly what you're looking for
             </p>
@@ -273,7 +273,7 @@ const HomePage = () => {
       <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Latest Articles</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Latest Articles</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Fresh insights and advice to keep you informed
             </p>
@@ -315,7 +315,7 @@ const HomePage = () => {
           )}
 
           <div className="text-center mt-12">
-            <Link to="/category/all" className="btn-outline">
+            <Link to="/blog" className="btn-outline">
               View All Articles
             </Link>
           </div>

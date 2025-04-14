@@ -1,4 +1,3 @@
-
 import PageHeader from "@/components/PageHeader";
 import { Link } from "react-router-dom";
 
@@ -7,7 +6,7 @@ const DisclaimerPage = () => {
     <div>
       <PageHeader 
         title="Disclaimer"
-        description="Important information about the content on Money Muse"
+        description="Important information about the content on finance90"
         center={false}
       />
 
@@ -21,14 +20,14 @@ const DisclaimerPage = () => {
               
               <div className="bg-primary/10 border-l-4 border-primary p-4 my-6">
                 <p className="text-lg font-semibold">
-                  The information provided on Money Muse is for general informational purposes only. All information on the site is provided in good faith, however, we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.
+                  The information provided on finance90 is for general informational purposes only. All information on the site is provided in good faith, however, we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.
                 </p>
               </div>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">Not Financial Advice</h2>
               
               <p>
-                The content on Money Muse is not intended to be a substitute for professional financial advice, diagnosis, or treatment. Always seek the advice of your financial advisor or other qualified financial professional with any questions you may have regarding your financial situation.
+                The content on finance90 is not intended to be a substitute for professional financial advice, diagnosis, or treatment. Always seek the advice of your financial advisor or other qualified financial professional with any questions you may have regarding your financial situation.
               </p>
               
               <p>
@@ -36,7 +35,7 @@ const DisclaimerPage = () => {
               </p>
               
               <p>
-                Money Muse does not recommend or endorse any specific tests, financial advisors, products, procedures, opinions, or other information that may be mentioned on the website. Reliance on any information provided by Money Muse, Money Muse employees, contracted writers, or medical professionals presenting content for publication to Money Muse is solely at your own risk.
+                finance90 does not recommend or endorse any specific tests, financial advisors, products, procedures, opinions, or other information that may be mentioned on the website. Reliance on any information provided by finance90, finance90 employees, contracted writers, or medical professionals presenting content for publication to finance90 is solely at your own risk.
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">Personal Experience and Opinion</h2>
@@ -52,13 +51,13 @@ const DisclaimerPage = () => {
               <h2 className="text-2xl font-bold mt-8 mb-4">Affiliate Links</h2>
               
               <p>
-                Some of the links on this website may be affiliate links. This means if you click on the link and purchase the item, Money Muse may receive an affiliate commission at no extra cost to you. All opinions remain our own, and we only recommend products or services that we use personally and believe will add value to our readers.
+                Some of the links on this website may be affiliate links. This means if you click on the link and purchase the item, finance90 may receive an affiliate commission at no extra cost to you. All opinions remain our own, and we only recommend products or services that we use personally and believe will add value to our readers.
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">No Guarantees</h2>
               
               <p>
-                The website and its content are provided "as is". Money Muse makes no guarantees about the results you might achieve through implementing suggestions, techniques, or ideas described on this website.
+                The website and its content are provided "as is". finance90 makes no guarantees about the results you might achieve through implementing suggestions, techniques, or ideas described on this website.
               </p>
               
               <p>
@@ -91,11 +90,11 @@ const DisclaimerPage = () => {
               <h2 className="text-2xl font-bold mt-8 mb-4">Use at Your Own Risk</h2>
               
               <p>
-                The use of the Money Muse website and content is at your own risk. When you use our website, you acknowledge and agree that you are participating voluntarily in using this website and that you are solely and personally responsible for your choices, actions, and results.
+                The use of the finance90 website and content is at your own risk. When you use our website, you acknowledge and agree that you are participating voluntarily in using this website and that you are solely and personally responsible for your choices, actions, and results.
               </p>
               
               <p>
-                Money Muse and its authors, partners, and affiliates assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness or timeliness.
+                finance90 and its authors, partners, and affiliates assume no responsibility or liability for any errors or omissions in the content of this site. The information contained in this site is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness or timeliness.
               </p>
 
               <div className="bg-gray-100 p-6 rounded-lg my-8">
@@ -104,7 +103,7 @@ const DisclaimerPage = () => {
                   If you have any questions about this disclaimer, please contact us at:
                 </p>
                 <p className="font-medium mt-2">
-                  Money Muse<br />
+                  finance90<br />
                   123 Financial Street<br />
                   New York, NY 10001<br />
                   Email: legal@finance90.com
@@ -112,7 +111,7 @@ const DisclaimerPage = () => {
               </div>
               
               <p>
-                By using the Money Muse website, you acknowledge that you have read and understand this disclaimer. If you do not agree with it, please do not use this website.
+                By using the finance90 website, you acknowledge that you have read and understand this disclaimer. If you do not agree with it, please do not use this website.
               </p>
               
               <p className="mt-8">

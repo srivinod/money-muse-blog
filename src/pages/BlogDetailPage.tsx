@@ -86,7 +86,7 @@ const BlogDetailPage = () => {
       {/* Main content with reduced width */}
       <div className="max-w-3xl mx-4 py-8 md:py-12">
         <div className="mb-3">
-          <Link to={`/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`} className="inline-flex items-center text-primary hover:underline mb-4">
+          <Link to={`/blog/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`} className="inline-flex items-center text-primary hover:underline mb-4">
             <ArrowLeft size={16} className="mr-1" />
             Back to {post.category}
           </Link>

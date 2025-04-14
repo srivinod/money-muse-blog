@@ -1,4 +1,3 @@
-
 import PageHeader from "@/components/PageHeader";
 
 const PrivacyPage = () => {
@@ -19,13 +18,13 @@ const PrivacyPage = () => {
               </p>
 
               <p>
-                At Money Muse, we respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
+                At finance90, we respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">1. Important Information and Who We Are</h2>
               
               <p>
-                This privacy policy aims to give you information on how Money Muse collects and processes your personal data through your use of this website, including any data you may provide through this website when you sign up for our newsletter, download resources, or contact us.
+                This privacy policy aims to give you information on how finance90 collects and processes your personal data through your use of this website, including any data you may provide through this website when you sign up for our newsletter, download resources, or contact us.
               </p>
               
               <p>
@@ -33,7 +32,7 @@ const PrivacyPage = () => {
               </p>
               
               <p>
-                Money Muse is the controller and responsible for your personal data (collectively referred to as "we", "us" or "our" in this privacy policy).
+                finance90 is the controller and responsible for your personal data (collectively referred to as "we", "us" or "our" in this privacy policy).
               </p>
 
               <h2 className="text-2xl font-bold mt-8 mb-4">2. The Data We Collect About You</h2>

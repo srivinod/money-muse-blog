@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Calendar, User } from "lucide-react";
 
@@ -32,7 +31,7 @@ const BlogPostCard = ({
           className={`w-full object-cover ${featured ? 'h-64' : 'h-48'}`}
         />
         <Link 
-          to={`/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
+          to={`/blog/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
           className="absolute top-4 left-4 bg-primary/90 text-white text-xs font-medium px-3 py-1 rounded-full"
         >
           {category}

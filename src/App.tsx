@@ -14,6 +14,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import DisclaimerPage from "./pages/DisclaimerPage";
 import CategoryPage from "./pages/CategoryPage";
+import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
@@ -28,9 +29,13 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { migrateMockDataToSupabase } from "@/services/blogService";
 import { setupBlogStorage } from '@/services/blog';
+import { categories } from "@/data/blogData";
 
 // Create QueryClient outside of component
 const queryClient = new QueryClient();
+
+// Create a pattern that matches only the existing category slugs
+const categoryPattern = categories.map(cat => cat.slug).join('|');
 
 const App = () => {
   // Use useState inside the component function
@@ -87,10 +92,12 @@ const App = () => {
                 <Route path="privacy" element={<PrivacyPage />} />
                 <Route path="terms" element={<TermsPage />} />
                 <Route path="disclaimer" element={<DisclaimerPage />} />
-                <Route path="category/:categoryName" element={<CategoryPage />} />
+                <Route path="blog" element={<BlogPage />} />
+                <Route path="blog/category/:categoryName" element={<CategoryPage />} />
                 <Route path="blog/:slug" element={<BlogDetailPage />} />
                 <Route path="login" element={<LoginPage />} />
                 
+         
                 {/* Admin Routes */}
                 <Route 
                   path="admin/dashboard" 

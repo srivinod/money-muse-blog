@@ -92,35 +92,35 @@ const Header = () => {
                   className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-10"
                 >
                   <Link 
-                    to="/category/saving" 
+                    to="/blog/category/saving" 
                     className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white"
                     onClick={() => setIsDesktopCategoriesOpen(false)}
                   >
                     Saving Money
                   </Link>
                   <Link 
-                    to="/category/budgeting" 
+                    to="/blog/category/budgeting" 
                     className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white"
                     onClick={() => setIsDesktopCategoriesOpen(false)}
                   >
                     Budgeting
                   </Link>
                   <Link 
-                    to="/category/investing" 
+                    to="/blog/category/investing" 
                     className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white"
                     onClick={() => setIsDesktopCategoriesOpen(false)}
                   >
                     Investing
                   </Link>
                   <Link 
-                    to="/category/frugal-living" 
+                    to="/blog/category/frugal-living" 
                     className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white"
                     onClick={() => setIsDesktopCategoriesOpen(false)}
                   >
                     Frugal Living
                   </Link>
                   <Link 
-                    to="/category/financial-planning" 
+                    to="/blog/category/financial-planning" 
                     className="block px-4 py-2 text-gray-700 hover:bg-primary hover:text-white"
                     onClick={() => setIsDesktopCategoriesOpen(false)}
                   >
@@ -199,7 +199,7 @@ const Header = () => {
                   {isMobileCategoriesOpen && (
                     <div className="flex flex-col pl-4 mt-2 space-y-2">
                       <Link 
-                        to="/category/saving" 
+                        to="/blog/category/saving" 
                         className="text-gray-600 hover:text-primary"
                         onClick={() => {
                           setIsMenuOpen(false);
@@ -209,7 +209,7 @@ const Header = () => {
                         Saving Money
                       </Link>
                       <Link 
-                        to="/category/budgeting" 
+                        to="/blog/category/budgeting" 
                         className="text-gray-600 hover:text-primary"
                         onClick={() => {
                           setIsMenuOpen(false);
@@ -219,7 +219,7 @@ const Header = () => {
                         Budgeting
                       </Link>
                       <Link 
-                        to="/category/investing" 
+                        to="/blog/category/investing" 
                         className="text-gray-600 hover:text-primary"
                         onClick={() => {
                           setIsMenuOpen(false);
@@ -229,7 +229,7 @@ const Header = () => {
                         Investing
                       </Link>
                       <Link 
-                        to="/category/frugal-living" 
+                        to="/blog/category/frugal-living" 
                         className="text-gray-600 hover:text-primary"
                         onClick={() => {
                           setIsMenuOpen(false);
@@ -239,7 +239,7 @@ const Header = () => {
                         Frugal Living
                       </Link>
                       <Link 
-                        to="/category/financial-planning" 
+                        to="/blog/category/financial-planning" 
                         className="text-gray-600 hover:text-primary"
                         onClick={() => {
                           setIsMenuOpen(false);

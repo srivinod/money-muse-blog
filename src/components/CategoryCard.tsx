@@ -19,7 +19,7 @@ const CategoryCard = ({ title, description, icon, slug }: CategoryCardProps) => 
       </div>
       <div className="mt-auto text-center pt-4 border-t border-gray-100 w-full">
         <Link
-          to={`/category/${slug}`}
+          to={`/blog/category/${slug}`}
           className="text-primary hover:text-primary-dark font-medium inline-flex items-center transition-colors"
         >
           Explore Articles

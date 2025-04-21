@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import PageHeader from "@/components/PageHeader";
@@ -18,16 +18,17 @@ import BlogFormActions from "@/components/blog/BlogFormActions";
 import useBlogForm from "@/hooks/useBlogForm";
 
 const BlogEditorPage = () => {
-  const { isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin, isLoading: isAuthLoading } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEditMode = id && id !== "new";
 
   // Fetch post data if in edit mode
   const { data: postData, isLoading: isPostLoading } = useQuery({
     queryKey: ['blog-post', id],
     queryFn: () => fetchBlogPostById(id as string),
-    enabled: isEditMode,
+    enabled: isEditMode && !isAuthLoading && isAuthenticated && isAdmin,
     // Disable caching to always fetch fresh data
     gcTime: 0,
     staleTime: 0,
@@ -37,7 +38,7 @@ const BlogEditorPage = () => {
   const { 
     formState, 
     isEditMode: isEdit, 
-    isLoading, 
+    isLoading: isFormLoading, 
     handleSubmit 
   } = useBlogForm(postData, id);
 
@@ -57,11 +58,13 @@ const BlogEditorPage = () => {
   } = formState;
 
   useEffect(() => {
-    if (!isAuthenticated || !isAdmin) {
-      navigate("/login");
-      return;
+    // Only redirect if auth state is loaded and user is not authenticated/admin
+    if (!isAuthLoading && (!isAuthenticated || !isAdmin)) {
+      // Store the current URL to redirect back after login
+      const returnTo = location.pathname + location.search;
+      navigate(`/login?returnTo=${encodeURIComponent(returnTo)}`, { replace: true });
     }
-  }, [isAuthenticated, isAdmin, navigate]);
+  }, [isAuthenticated, isAdmin, navigate, isAuthLoading, location]);
 
   // Add debug logging
   useEffect(() => {
@@ -70,6 +73,18 @@ const BlogEditorPage = () => {
     }
   }, [postData]);
 
+  // Show loading state while auth is being checked or post is being loaded
+  if (isAuthLoading || (isEditMode && isPostLoading)) {
+    return (
+      <div className="container py-12">
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated or not admin
   if (!isAuthenticated || !isAdmin) {
     return null;
   }
@@ -145,7 +160,7 @@ const BlogEditorPage = () => {
           </Tabs>
           
           <BlogFormActions 
-            isLoading={isLoading || isPostLoading}
+            isLoading={isFormLoading}
             isEditMode={isEdit}
           />
         </form>

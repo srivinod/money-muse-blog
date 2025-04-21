@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,12 +14,16 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login, signup, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnTo = searchParams.get('returnTo') || '/admin/dashboard';
 
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate("/admin/dashboard");
-    return null;
-  }
+  // Move navigation to useEffect
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(returnTo, { replace: true });
+    }
+  }, [isAuthenticated, navigate, returnTo]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +32,7 @@ const LoginPage = () => {
     try {
       const success = await login(email, password);
       if (success) {
-        navigate("/admin/dashboard");
+        navigate(returnTo, { replace: true });
       }
     } finally {
       setIsLoading(false);

@@ -132,7 +132,7 @@ const BlogDetailPage = () => {
               {post.content ? (
                 <div 
                   dangerouslySetInnerHTML={{ __html: post.content }} 
-                  className="mt-4 md:mt-6 break-words overflow-x-hidden prose prose-sm md:prose-lg max-w-none [&_p]:mb-4 [&_p:last-child]:mb-0 [&_br]:block [&_br]:h-4"
+                  className="mt-4 md:mt-6 break-words overflow-x-hidden prose prose-sm md:prose-lg max-w-none [&_p]:mb-4 [&_p:last-child]:mb-0 [&_br]:block [&_br]:h-4 [&_h1]:font-playfair [&_h2]:font-inter [&_h3]:font-inter"
                 />
               ) : (
                 <p className="text-gray-500 italic">No content available for this article.</p>

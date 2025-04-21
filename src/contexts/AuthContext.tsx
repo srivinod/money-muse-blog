@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
@@ -9,6 +8,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isAdmin: boolean;
   user: User | null;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   signup: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -21,33 +21,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    let mounted = true;
+
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        if (!mounted) return;
+        
         setSession(session);
         setUser(session?.user ?? null);
         setIsAuthenticated(!!session);
-        
-        // For demo purposes, all authenticated users are admins
-        // In a real app, you would check user roles in a database
         setIsAdmin(!!session);
+
+        // Handle navigation based on auth state and current location
+        if (event === 'SIGNED_IN') {
+          // If we're on the login page, redirect to the return URL or dashboard
+          if (location.pathname.includes('/login')) {
+            const returnTo = new URLSearchParams(location.search).get('returnTo');
+            navigate(returnTo || '/admin/dashboard', { replace: true });
+          }
+          // Otherwise, stay on the current page
+          return;
+        }
+
+        if (event === 'SIGNED_OUT' && !location.pathname.includes('/login')) {
+          const returnTo = encodeURIComponent(location.pathname + location.search);
+          navigate(`/login?returnTo=${returnTo}`, { replace: true });
+        }
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsAuthenticated(!!session);
-      setIsAdmin(!!session);
-    });
+    // Initialize auth state
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setIsAuthenticated(!!session);
+        setIsAdmin(!!session);
 
-    return () => subscription.unsubscribe();
-  }, []);
+        // If we have a session, stay on the current page
+        if (session) {
+          return;
+        }
+
+        // If we don't have a session and we're on a protected route, redirect to login
+        if (!session && location.pathname.startsWith('/admin/')) {
+          const returnTo = encodeURIComponent(location.pathname + location.search);
+          navigate(`/login?returnTo=${returnTo}`, { replace: true });
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [navigate, location]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -125,11 +169,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       title: "Logged out",
       description: "You have been logged out successfully",
     });
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, user, login, signup, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, user, isLoading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

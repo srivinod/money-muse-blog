@@ -73,6 +73,13 @@ const BlogEditorPage = () => {
     }
   }, [postData]);
 
+  const handleSave = (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+    handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+  };
+
   // Show loading state while auth is being checked or post is being loaded
   if (isAuthLoading || (isEditMode && isPostLoading)) {
     return (
@@ -103,7 +110,7 @@ const BlogEditorPage = () => {
           </Link>
         </div>
         
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+        <form onSubmit={handleSave} className="bg-white rounded-lg shadow-md p-6">
           <Tabs defaultValue="content" className="mb-6">
             <TabsList className="w-full mb-6">
               <TabsTrigger value="content" className="flex-1">Content</TabsTrigger>
@@ -144,6 +151,7 @@ const BlogEditorPage = () => {
               <ContentSection 
                 content={content}
                 setContent={setContent}
+                onSave={handleSave}
               />
             </TabsContent>
             

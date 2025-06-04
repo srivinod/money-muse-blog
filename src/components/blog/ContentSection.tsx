@@ -6,9 +6,10 @@ import { useEffect } from "react";
 interface ContentSectionProps {
   content: string;
   setContent: (value: string) => void;
+  onSave?: () => void;
 }
 
-const ContentSection = ({ content, setContent }: ContentSectionProps) => {
+const ContentSection = ({ content, setContent, onSave }: ContentSectionProps) => {
   // Add debug logging
   useEffect(() => {
     console.log("Content in ContentSection:", content);
@@ -23,7 +24,7 @@ const ContentSection = ({ content, setContent }: ContentSectionProps) => {
       <CardContent>
         <div className="space-y-2">
           <Label htmlFor="content">Post Content</Label>
-          <RichTextEditor value={content} onChange={setContent} />
+          <RichTextEditor value={content} onChange={setContent} onSave={onSave} />
         </div>
       </CardContent>
     </Card>

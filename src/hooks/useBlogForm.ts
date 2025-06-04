@@ -54,8 +54,8 @@ export const useBlogForm = (postData?: BlogPost | null, id?: string) => {
       toast({
         title: "Post created",
         description: "The blog post has been created successfully",
+        duration: 2000
       });
-      navigate("/admin/posts");
     },
     onError: (error) => {
       console.error("Error creating post:", error);
@@ -63,6 +63,7 @@ export const useBlogForm = (postData?: BlogPost | null, id?: string) => {
         title: "Error",
         description: "Failed to create the post. Please try again.",
         variant: "destructive",
+        duration: 2000
       });
     }
   });
@@ -84,8 +85,8 @@ export const useBlogForm = (postData?: BlogPost | null, id?: string) => {
       toast({
         title: "Post updated",
         description: "The blog post has been updated successfully",
+        duration: 2000
       });
-      navigate("/admin/posts");
     },
     onError: (error) => {
       console.error("Error updating post:", error);
@@ -93,6 +94,7 @@ export const useBlogForm = (postData?: BlogPost | null, id?: string) => {
         title: "Error",
         description: "Failed to update the post. Please try again.",
         variant: "destructive",
+        duration: 2000
       });
     }
   });
@@ -106,6 +108,7 @@ export const useBlogForm = (postData?: BlogPost | null, id?: string) => {
         title: "Validation error",
         description: "Please fill in all required fields",
         variant: "destructive",
+        duration: 2000
       });
       return;
     }
